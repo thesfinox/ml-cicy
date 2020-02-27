@@ -156,10 +156,9 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                                               prior='uniform')
                     }
 
-    xgb_h11 = BayesSearchCV(estimator=XGBRegressor(n_jobs=1,
-                                                     objective='reg:squarederror',
-                                                     tree_method='hist',
-                                                     random_state=RAND),
+    xgb_h11 = BayesSearchCV(estimator=XGBRegressor(objective='reg:squarederror',
+                                                   tree_method='hist',
+                                                   random_state=RAND),
                               search_spaces=search_params,
                               n_iter=n_iter,
                               scoring=make_scorer(accuracy_score,
@@ -169,10 +168,9 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                               n_jobs=-1,
                               verbose=0
                              )
-    xgb_h21 = BayesSearchCV(estimator=XGBRegressor(n_jobs=1,
-                                                     objective='reg:squarederror',
-                                                     tree_method='hist',
-                                                     random_state=RAND),
+    xgb_h21 = BayesSearchCV(estimator=XGBRegressor(objective='reg:squarederror',
+                                                   tree_method='hist',
+                                                   random_state=RAND),
                               search_spaces=search_params,
                               n_iter=n_iter,
                               scoring=make_scorer(accuracy_score,

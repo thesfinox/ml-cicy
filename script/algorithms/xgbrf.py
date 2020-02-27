@@ -153,8 +153,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                                                prior='uniform')
                     }
 
-    xgbrf_h11 = BayesSearchCV(estimator=XGBRFRegressor(n_jobs=1,
-                                                       objective='reg:squarederror', 
+    xgbrf_h11 = BayesSearchCV(estimator=XGBRFRegressor(objective='reg:squarederror', 
                                                        tree_method='hist',
                                                        random_state=RAND),
                               search_spaces=search_params,
@@ -166,8 +165,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                               n_jobs=-1,
                               verbose=0
                              )
-    xgbrf_h21 = BayesSearchCV(estimator=XGBRFRegressor(n_jobs=1,
-                                                       objective='reg:squarederror',
+    xgbrf_h21 = BayesSearchCV(estimator=XGBRFRegressor(objective='reg:squarederror',
                                                        tree_method='hist',
                                                        random_state=RAND),
                               search_spaces=search_params,

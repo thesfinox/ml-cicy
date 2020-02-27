@@ -203,15 +203,16 @@ def compute(df_name, rounding=np.floor, seed=42):
 
     # Build, compile and fit the model:
     model_cnn = build_conv_model_2(num_cp_dense_layers=([],[]),
-                                   dim_cp_conv1d_layers=([],[10]),
-                                   dim_h0_amb_conv1d_layers=([],[20]),
-                                   matrix_conv1d_layers=([100],[100]),
+                                   dim_cp_conv1d_layers=([],[15,30,30,15]),
+                                   dim_h0_amb_conv1d_layers=([20],[20,20,10]),
+                                   matrix_conv1d_layers=([200, 200, 100],
+                                                         [300, 200, 200, 100, 100]),
                                    activation='relu',
                                    kernel_size=3,
                                    max_pool=[0,0],
-                                   dropout=[0.5,0.5],
+                                   dropout=[0.5,0.4],
                                    batch_normalization=True,
-                                   dense=[],
+                                   dense=[1],
                                    out_activation=True
                                   )
 

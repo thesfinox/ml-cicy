@@ -243,7 +243,7 @@ def compute(df_name, n_iter=30, seed=42):
                           verbose=0
                          )
 
-    print('Fitting the Functional Conv1D Keras models...')
+    print('    Fitting the Functional Conv1D Keras models...')
     matrix_functional_pca.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1),
                                         dtype='float64'),
                                  K.cast(df_eng_h21_train[:,1:13].reshape(-1,12,1),
@@ -259,7 +259,7 @@ def compute(df_name, n_iter=30, seed=42):
                               verbose=0
                              )
 
-    print('Fitting the Functional Dense Keras models...')
+    print('    Fitting the Functional Dense Keras models...')
     matrix_functional_pca_dense.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1), 
                                               dtype='float64'),
                                        K.cast(df_eng_h21_train[:,1:13],
@@ -828,4 +828,4 @@ def compute(df_name, n_iter=30, seed=42):
              df_labels_val['h21'].values,
              h21_predictions_test,
              df_labels_test['h21'].values,
-             rounding=rounding_svr_polyy)
+             rounding=rounding_svr_poly)

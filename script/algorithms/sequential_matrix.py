@@ -337,7 +337,7 @@ def compute(df_name, rounding=np.floor, seed=42):
     else:
         print('\nCannot load the best model!')
         
-    print('    Accuracy (rint) on the training set:{:.3f}%'.format(\
+    print('    Accuracy (rint) on the training set: {:.3f}%'.format(\
                     accuracy_score(h21_labels_nn_train,
                                    model_h21_cnn.predict(df_matrix_nn_train),
                                    rounding=np.rint)*100))

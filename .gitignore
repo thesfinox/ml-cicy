@@ -21,3 +21,4 @@ script/*.h5
 script/*.tar.gz
 script/*.pdf
 script/*.xz
+script/*.txt

@@ -204,14 +204,14 @@ def compute(df_name, rounding=np.floor, seed=42):
 
     # Build, compile and fit the model:
     model_cnn = build_dense_model(num_cp_dense_layers=([],[]),
-                                  dim_cp_dense_layers=([],[15]),
-                                  dim_h0_amb_dense_layers=([],[10, 10]),
-                                  matrix_dense_layers=([200, 100, 100, 50, 50],
-                                                       [200, 100, 100, 100, 50, 50, 30]),
+                                  dim_cp_dense_layers=([],[15,30,30,15]),
+                                  dim_h0_amb_dense_layers=([],[20,20,10]),
+                                  matrix_dense_layers=([200, 200, 100],
+                                                       [300, 200, 200, 100, 100]),
                                   activation='relu',
                                   dropout=[0.5,0.4],
                                   batch_normalization=True,
-                                  dense=[10, 20, 10],
+                                  dense=[1],
                                   out_activation=True
                                  )
 

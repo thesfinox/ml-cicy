@@ -195,14 +195,14 @@ def compute(df_name, rounding=np.floor, seed=42):
 
     # build the model
     model_cnn = build_conv_model(num_cp_dense_layers=([],[]),
-                                 dim_cp_conv1d_layers=([],[15]),
-                                 dim_h0_amb_conv1d_layers=([],[20]),
+                                 dim_cp_conv1d_layers=([],[15,15]),
+                                 dim_h0_amb_conv1d_layers=([20],[15,30,30,15]),
                                  matrix_conv2d_layers=([200, 100, 100],
                                                        [300, 200, 200, 100]),
                                  activation='relu',
                                  kernel_size=3,
                                  max_pool=[0,0],
-                                 dropout=[0.5,0.5],
+                                 dropout=[0.5,0.4],
                                  batch_normalization=True,
                                  dense=[1],
                                  out_activation=True

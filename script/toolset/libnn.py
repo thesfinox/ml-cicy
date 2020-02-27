@@ -261,6 +261,8 @@ def build_conv_model(num_cp_dense_layers=(None,None),
     h11 = Dense(1, name='h_11')(h11)
     
     intermediate = Lambda(lambda x: -x)(h11) # return correlation instead of anti-correlation
+    intermediate = concatenate([intermediate,
+                                dim_cp_layer_h21]) # insert again
     if len(dense) > 0:
         for n in range(len(dense)):
             intermediate = Dense(dense[n])(intermediate)
@@ -451,6 +453,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     h11 = Dense(1, name='h_11')(h11)
     
     intermediate = Lambda(lambda x: -x)(h11) # return correlation instead of anti-correlation
+    intermediate = concatenate([intermediate, dim_cp_layer_h21])
     if len(dense) > 0:
         for n in range(len(dense)):
             intermediate = Dense(dense[n])(intermediate)
@@ -600,6 +603,7 @@ def build_dense_model(num_cp_dense_layers=(None,None),
     h11 = Dense(1, name='h_11')(h11)
     
     intermediate = Lambda(lambda x: -x)(h11) # return correlation instead of anti-correlation
+    intermediate = concatenate([intermediate, dim_cp_layer_h21])
     if len(dense) > 0:
         for n in range(len(dense)):
             intermediate = Dense(dense[n])(intermediate)

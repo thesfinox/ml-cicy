@@ -4,9 +4,9 @@
 # 3-folds. The relevant numbers are h_11 and h_21. We use several approaches.
 # Specifically:
 # 
-# 1. evaluate different algorithms using Scikit-learn and XGBoost (for each one
-# of them build a baseline with only the configuration matrix for both h_11 and
-# h_21, then use feature engineering to improve the results):
+# 1. evaluate different algorithms using Scikit-learn (and XGBoost, if needed).
+# For each one of them build a baseline with only the configuration matrix for
+# both h_11 and h_21, then use feature engineering to improve the results):
 #     
 #     - Linear Regression,
 #     - Lasso,
@@ -14,7 +14,7 @@
 #     - Ridge,
 #     - LinearSVR,
 #     - SVR (rbf),
-#     - Boosted Tree,
+#     - Boosted Tree (Gradient Boosting),
 #     - Random Forest,
 #     
 # 2. build a working Convolutional Neural Network using Tensorflow-Keras:
@@ -56,6 +56,8 @@ from algorithms               import linear_regression, \
                                      svr_rbf, \
                                      xgb, \
                                      xgbrf, \
+                                     grd_boost, \
+                                     rnd_for, \
                                      sequential_matrix, \
                                      functional_matrix, \
                                      functional_matrix_pca, \
@@ -111,36 +113,38 @@ def main():
         tar.extract(DB_FILE)
         print('Extracted {}'.format(DB_PATH))
 
-    # Load the database
-    df = load_dataset(DB_PATH)
+    # # Load the database
+    # df = load_dataset(DB_PATH)
 
-    # Create visualizations and plots from the dataset (returns cleaned dataset)
-    df = data_visualization(df)
+    # # Create visualizations and plots from the dataset (returns cleaned dataset)
+    # df = data_visualization(df)
 
-    # Extract features and labels
-    data_extraction(df, DB_NAME)
+    # # Extract features and labels
+    # data_extraction(df, DB_NAME)
 
-    # Now consider the clustering analysis
-    cluster_range = clustering(DB_NAME, seed=RAND)
+    # # Now consider the clustering analysis
+    # cluster_range = clustering(DB_NAME, seed=RAND)
 
-    # Now consider the PCA analysis
-    pca(DB_NAME, seed=RAND)
+    # # Now consider the PCA analysis
+    # pca(DB_NAME, seed=RAND)
 
-    # Compute the feature importances
-    importances(DB_NAME, cluster_range, seed=RAND)
+    # # Compute the feature importances
+    # importances(DB_NAME, cluster_range, seed=RAND)
 
-    # Extract usable features
-    feature_extract(DB_NAME)
+    # # Extract usable features
+    # feature_extract(DB_NAME)
 
-    # Compute algorithms
-    linear_regression.compute(DB_NAME, rounding=np.floor, seed=RAND)
-    lasso.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
-    elastic_net.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
-    ridge.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
-    linear_svr.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
-    svr_rbf.compute(DB_NAME, n_iter=50, rounding=np.rint, seed=RAND)
-    xgb.compute(DB_NAME, n_iter=30, rounding=np.floor, seed=RAND)
-    xgbrf.compute(DB_NAME, n_iter=30, rounding=np.floor, seed=RAND)
+    # # Compute algorithms
+    # linear_regression.compute(DB_NAME, rounding=np.floor, seed=RAND)
+    # lasso.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
+    # elastic_net.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
+    # ridge.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
+    # linear_svr.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
+    # svr_rbf.compute(DB_NAME, n_iter=50, rounding=np.rint, seed=RAND)
+    xgb.compute(DB_NAME, n_iter=20, rounding=np.floor, seed=RAND)
+    xgbrf.compute(DB_NAME, n_iter=20, rounding=np.floor, seed=RAND)
+    # rnd_for.compute(DB_NAME, n_iter=12, rounding=np.floor, seed=RAND)
+    # grd_boost.compute(DB_NAME, n_iter=12, rounding=np.floor, seed=RAND)
     sequential_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
     functional_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
     functional_matrix_pca.compute(DB_NAME, rounding=np.rint, seed=RAND)

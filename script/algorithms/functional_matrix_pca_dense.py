@@ -212,7 +212,9 @@ def compute(df_name, rounding=np.floor, seed=42):
                                   dropout=[0.5,0.4],
                                   batch_normalization=True,
                                   dense=[1],
-                                  out_activation=True
+                                  out_activation=True,
+                                  l1_regularization=(0.0,0.0),
+                                  l2_regularization=(0.0,0.0)
                                  )
 
     # Plot the model
@@ -235,16 +237,16 @@ def compute(df_name, rounding=np.floor, seed=42):
     # Create callbacks
     callbacks = [EarlyStopping(monitor='val_loss',
                                patience=80,
-                               verbose=1),
+                               verbose=0),
                  ReduceLROnPlateau(monitor='val_loss',
                                    factor=0.3,
                                    patience=50,
-                                   verbose=1),
+                                   verbose=0),
                  ModelCheckpoint(path.join(MOD_PATH,
                                            'cnn_functional_pca_dense.h5'),
                                  monitor='val_loss',
                                  save_best_only=True,
-                                 verbose=1)
+                                 verbose=0)
                 ]
 
     # Fit the model
@@ -256,6 +258,7 @@ def compute(df_name, rounding=np.floor, seed=42):
                                          h21_labels_nn_train],
                                       batch_size=32,
                                       epochs=1000,
+                                      verbose=0,
                                       callbacks=callbacks,
                                       validation_data=([num_cp_input_val,
                                                         dim_cp_input_val,

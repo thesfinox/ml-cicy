@@ -137,11 +137,11 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
     # df_eng_h21_test  = std_scal.transform(df_eng_h21_test)
 
     # Compute the algorithm
-    search_params = {'num_parallel_tree': Integer(2, 50,
+    search_params = {'num_parallel_tree': Integer(2, 75,
                                                   prior='uniform'),
-                     'max_depth':         Integer(2, 75,   
+                     'max_depth':         Integer(2, 20,   
                                                   prior='uniform'),
-                     'subsample':         Real(0.6, 0.9, 
+                     'subsample':         Real(0.6, 1.0, 
                                                prior='uniform'),
                      'reg_alpha':         Real(1e-2, 1e2,
                                                base=10,

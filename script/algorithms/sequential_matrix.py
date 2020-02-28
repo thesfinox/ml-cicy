@@ -123,7 +123,9 @@ def compute(df_name, rounding=np.floor, seed=42):
                       'dropout':             0.5,
                       'batch_normalization': True,
                       'dense':               10,
-                      'out_activation':      True
+                      'out_activation':      True,
+                      'l1_regularization':   0.0,
+                      'l2_regularization':   0.0
                      }
 
     model_h11_cnn = build_cnn_sequential(**cnn_h11_params)
@@ -149,16 +151,16 @@ def compute(df_name, rounding=np.floor, seed=42):
     # Create callbacks
     callbacks_h11 = [EarlyStopping(monitor='val_mean_squared_error',
                                    patience=50,
-                                   verbose=1),
+                                   verbose=0),
                      ReduceLROnPlateau(monitor='val_mean_squared_error',
                                        factor=0.3,
                                        patience=30,
-                                       verbose=1),
+                                       verbose=0),
                      ModelCheckpoint(path.join(MOD_PATH,
                                                'cnn_matrix_sequential_h11.h5'),
                                      monitor='val_mean_squared_error',
                                      save_best_only=True,
-                                     verbose=1)
+                                     verbose=0)
                     ]
 
     # Fit the model
@@ -166,6 +168,7 @@ def compute(df_name, rounding=np.floor, seed=42):
                                           y=h11_labels_nn_train,
                                           batch_size=32,
                                           epochs=1000,
+                                          verbose=0,
                                           callbacks=callbacks_h11,
                                           validation_data=(df_matrix_nn_val,
                                                            h11_labels_nn_val)
@@ -249,7 +252,9 @@ def compute(df_name, rounding=np.floor, seed=42):
                       'dropout':             0.4,
                       'batch_normalization': True,
                       'dense':               15,
-                      'out_activation':      True
+                      'out_activation':      True,
+                      'l1_regularization':   0.0,
+                      'l2_regularization':   0.0
                      }
 
     model_h21_cnn = build_cnn_sequential(**cnn_h21_params)
@@ -275,16 +280,16 @@ def compute(df_name, rounding=np.floor, seed=42):
     # Create callbacks
     callbacks_h21 = [EarlyStopping(monitor='val_mean_squared_error',
                                    patience=50,
-                                   verbose=1),
+                                   verbose=0),
                      ReduceLROnPlateau(monitor='val_mean_squared_error',
                                        factor=0.3,
                                        patience=30,
-                                       verbose=1),
+                                       verbose=0),
                      ModelCheckpoint(path.join(MOD_PATH,
                                                'cnn_matrix_sequential_h21.h5'),
                                      monitor='val_mean_squared_error',
                                      save_best_only=True,
-                                     verbose=1)
+                                     verbose=0)
                     ]
 
     # Fit the model
@@ -292,6 +297,7 @@ def compute(df_name, rounding=np.floor, seed=42):
                                           y=h21_labels_nn_train,
                                           batch_size=32,
                                           epochs=1000,
+                                          verbose=0,
                                           callbacks=callbacks_h21,
                                           validation_data=(df_matrix_nn_val,
                                                            h21_labels_nn_val)

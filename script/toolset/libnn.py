@@ -16,14 +16,16 @@ assert np.__version__  >  '1.16'   # to avoid issues with pytables
 assert sk.__version__  >= '0.22.1' # for the recent implementation
 assert tf.__version__  >= '2.0.0'  # newest version
 
-from os                      import path
-from tensorflow              import keras
-from tensorflow.keras.models import Model, Sequential, save_model, load_model
-from tensorflow.keras.layers import Input, Lambda, \
-                                    Dense, Conv1D, Conv2D, concatenate, \
-                                    Dropout, MaxPool1D, MaxPool2D, \
-                                    Flatten, BatchNormalization, \
-                                    Activation, LeakyReLU
+from os                            import path
+from tensorflow                    import keras
+from tensorflow.keras.regularizers import l1_l2
+from tensorflow.keras.models       import Model, Sequential, save_model, \
+                                          load_model
+from tensorflow.keras.layers       import Input, Lambda, \
+                                          Dense, Conv1D, Conv2D, concatenate, \
+                                          Dropout, MaxPool1D, MaxPool2D, \
+                                          Flatten, BatchNormalization, \
+                                          Activation, LeakyReLU
 
 gpus = tf.config.experimental.list_physical_devices('GPU')   # set memory growth to avoid taking the entire GPU RAM
 if gpus:
@@ -47,8 +49,13 @@ def build_cnn_sequential(conv2d_layers,
                          dropout=0.4,
                          batch_normalization=True,
                          dense=10,
-                         out_activation=True
+                         out_activation=True,
+                         l1_regularization=0.0,
+                         l2_regularization=0.0
                         ):
+
+    # kernel regularizer
+    reg   = l1_l2(l1=l1_regularization, l2=l2_regularization)
     
     model = Sequential() # create the model
     
@@ -57,7 +64,8 @@ def build_cnn_sequential(conv2d_layers,
     for n in range(len(conv2d_layers)):            # add convolutional layers
         model.add(Conv2D(filters=conv2d_layers[n],
                          kernel_size=kernel_size,
-                         padding='same'
+                         padding='same',
+                         kernel_regularizer=reg
                         )
                  )
         if activation == 'relu':                   # add their activation
@@ -80,7 +88,7 @@ def build_cnn_sequential(conv2d_layers,
     model.add(Flatten())                           # add flattener
     
     if dense > 0:                                  # add dense layer (if requested)
-        model.add(Dense(units=dense))
+        model.add(Dense(units=dense, kernel_regularizer=reg))
         if activation == 'relu':                   # add their activation
             model.add(Activation('relu'))
         else:
@@ -105,8 +113,14 @@ def build_conv_model(num_cp_dense_layers=(None,None),
                      dropout=[0.4,0.2],
                      batch_normalization=True,
                      dense=[10],
-                     out_activation=True
+                     out_activation=True,
+                     l1_regularization=(0.0,0.0),
+                     l2_regularization=(0.0,0.0)
                     ):
+    
+    # kernel regularizers
+    reg_h11 = l1_l2(l1=l1_regularization[0], l2=l2_regularization[0])
+    reg_h21 = l1_l2(l1=l1_regularization[1], l2=l2_regularization[1])
     
    # connections for num_cp
     num_cp_layer_in = Input(shape=(1,), name='num_cp')
@@ -114,7 +128,9 @@ def build_conv_model(num_cp_dense_layers=(None,None),
     num_cp_layer_h21 = Lambda(lambda x: x, name='num_cp_h21')(num_cp_layer_in)
     
     for n in range(len(num_cp_dense_layers[0])):
-        num_cp_layer_h11 = Dense(num_cp_dense_layers[0][n])(num_cp_layer_h11)
+        num_cp_layer_h11 = Dense(num_cp_dense_layers[0][n],
+                                 kernel_regularizer=reg_h11
+                                )(num_cp_layer_h11)
         if activation == 'relu':
             num_cp_layer_h11 = Activation('relu')(num_cp_layer_h11)
         else:
@@ -125,7 +141,9 @@ def build_conv_model(num_cp_dense_layers=(None,None),
         num_cp_layer_h11 = Dropout(rate=dropout[0])(num_cp_layer_h11)
         
     for n in range(len(num_cp_dense_layers[1])):
-        num_cp_layer_h21 = Dense(num_cp_dense_layers[1][n])(num_cp_layer_h21)
+        num_cp_layer_h21 = Dense(num_cp_dense_layers[1][n],
+                                 kernel_regularizer=reg_h21
+                                )(num_cp_layer_h21)
         if activation == 'relu':
             num_cp_layer_h21 = Activation('relu')(num_cp_layer_h21)
         else:
@@ -159,6 +177,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
     for n in range(len(dim_cp_conv1d_layers[1])):
         dim_cp_layer_h21 = Conv1D(dim_cp_conv1d_layers[1][n],
                                   kernel_size=kernel_size,
+                                  kernel_regularizer=reg_h21,
                                   padding='same')(dim_cp_layer_h21)
         if activation == 'relu':
             dim_cp_layer_h21 = Activation('relu')(dim_cp_layer_h21)
@@ -183,6 +202,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
     for n in range(len(dim_h0_amb_conv1d_layers[0])):
         dim_h0_layer_h11 = Conv1D(dim_h0_amb_conv1d_layers[0][n],
                                   kernel_size=kernel_size,
+                                  kernel_regularizer=reg_h11,
                                   padding='same')(dim_h0_layer_h11)
         if activation == 'relu':
             dim_h0_layer_h11 = Activation('relu')(dim_h0_layer_h11)
@@ -199,6 +219,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
     for n in range(len(dim_h0_amb_conv1d_layers[1])):
         dim_h0_layer_h21 = Conv1D(dim_h0_amb_conv1d_layers[1][n],
                                   kernel_size=kernel_size,
+                                  kernel_regularizer=reg,
                                   padding='same')(dim_h0_layer_h21)
         if activation == 'relu':
             dim_h0_layer_h21 = Activation('relu')(dim_h0_layer_h21)
@@ -223,6 +244,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
     for n in range(len(matrix_conv2d_layers[0])):
         matrix_layer_h11 = Conv2D(matrix_conv2d_layers[0][n],
                                   kernel_size=kernel_size,
+                                  kernel_regularizer=reg_h11,
                                   padding='same')(matrix_layer_h11)
         if activation == 'relu':
             matrix_layer_h11 = Activation('relu')(matrix_layer_h11)
@@ -239,6 +261,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
     for n in range(len(matrix_conv2d_layers[1])):
         matrix_layer_h21 = Conv2D(matrix_conv2d_layers[1][n],
                                   kernel_size=kernel_size,
+                                  kernel_regularizer=reg_h21,
                                   padding='same')(matrix_layer_h21)
         if activation == 'relu':
             matrix_layer_h21 = Activation('relu')(matrix_layer_h21)
@@ -297,8 +320,14 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
                        dropout=[0.4,0.2],
                        batch_normalization=True,
                        dense=[10],
-                       out_activation=True
+                       out_activation=True,
+                       l1_regularization=(0.0,0.0),
+                       l2_regularization=(0.0,0.0)
                       ):
+    
+    # kernel regularizers
+    reg_h11 = l1_l2(l1=l1_regularization[0], l2=l2_regularization[0])
+    reg_h21 = l1_l2(l1=l1_regularization[1], l2=l2_regularization[1])
     
    # connections for num_cp
     num_cp_layer_in = Input(shape=(1,), name='num_cp')
@@ -306,7 +335,9 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     num_cp_layer_h21 = Lambda(lambda x: x, name='num_cp_h21')(num_cp_layer_in)
     
     for n in range(len(num_cp_dense_layers[0])):
-        num_cp_layer_h11 = Dense(num_cp_dense_layers[0][n])(num_cp_layer_h11)
+        num_cp_layer_h11 = Dense(num_cp_dense_layers[0][n],
+                                 kernel_regularizer=reg_h11
+                                )(num_cp_layer_h11)
         if activation == 'relu':
             num_cp_layer_h11 = Activation('relu')(num_cp_layer_h11)
         else:
@@ -317,7 +348,9 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
         num_cp_layer_h11 = Dropout(rate=dropout[0])(num_cp_layer_h11)
         
     for n in range(len(num_cp_dense_layers[1])):
-        num_cp_layer_h21 = Dense(num_cp_dense_layers[1][n])(num_cp_layer_h21)
+        num_cp_layer_h21 = Dense(num_cp_dense_layers[1][n],
+                                 kernel_regularizer=reg_h21
+                                )(num_cp_layer_h21)
         if activation == 'relu':
             num_cp_layer_h21 = Activation('relu')(num_cp_layer_h21)
         else:
@@ -335,6 +368,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     for n in range(len(dim_cp_conv1d_layers[0])):
         dim_cp_layer_h11 = Conv1D(dim_cp_conv1d_layers[0][n],
                                   kernel_size=kernel_size,
+                                  kernel_regularizer=reg_h11,
                                   padding='same')(dim_cp_layer_h11)
         if activation == 'relu':
             dim_cp_layer_h11 = Activation('relu')(dim_cp_layer_h11)
@@ -351,6 +385,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     for n in range(len(dim_cp_conv1d_layers[1])):
         dim_cp_layer_h21 = Conv1D(dim_cp_conv1d_layers[1][n],
                                   kernel_size=kernel_size,
+                                  kernel_regularizer=reg_h21,
                                   padding='same')(dim_cp_layer_h21)
         if activation == 'relu':
             dim_cp_layer_h21 = Activation('relu')(dim_cp_layer_h21)
@@ -375,6 +410,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     for n in range(len(dim_h0_amb_conv1d_layers[0])):
         dim_h0_layer_h11 = Conv1D(dim_h0_amb_conv1d_layers[0][n],
                                   kernel_size=kernel_size,
+                                  kernel_regularizer=reg_h11,
                                   padding='same')(dim_h0_layer_h11)
         if activation == 'relu':
             dim_h0_layer_h11 = Activation('relu')(dim_h0_layer_h11)
@@ -391,6 +427,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     for n in range(len(dim_h0_amb_conv1d_layers[1])):
         dim_h0_layer_h21 = Conv1D(dim_h0_amb_conv1d_layers[1][n],
                                   kernel_size=kernel_size,
+                                  kernel_regularizer=reg_h21,
                                   padding='same')(dim_h0_layer_h21)
         if activation == 'relu':
             dim_h0_layer_h21 = Activation('relu')(dim_h0_layer_h21)
@@ -415,6 +452,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     for n in range(len(matrix_conv1d_layers[0])):
         matrix_layer_h11 = Conv1D(matrix_conv1d_layers[0][n],
                                   kernel_size=kernel_size,
+                                  kernel_regularizer=reg_h11,
                                   padding='same')(matrix_layer_h11)
         if activation == 'relu':
             matrix_layer_h11 = Activation('relu')(matrix_layer_h11)
@@ -431,6 +469,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     for n in range(len(matrix_conv1d_layers[1])):
         matrix_layer_h21 = Conv1D(matrix_conv1d_layers[1][n],
                                   kernel_size=kernel_size,
+                                  kernel_regularizer=reg_h21,
                                   padding='same')(matrix_layer_h21)
         if activation == 'relu':
             matrix_layer_h21 = Activation('relu')(matrix_layer_h21)
@@ -486,8 +525,14 @@ def build_dense_model(num_cp_dense_layers=(None,None),
                       dropout=[0.4,0.2],
                       batch_normalization=True,
                       dense=[10],
-                      out_activation=True
+                      out_activation=True,
+                      l1_regularization=(0.0,0.0),
+                      l2_regularization=(0.0,0.0)
                      ):
+    
+    # kernel regularizers
+    reg_h11 = l1_l2(l1=l1_regularization[0], l2=l2_regularization[0])
+    reg_h21 = l1_l2(l1=l1_regularization[1], l2=l2_regularization[1])
     
     # connections for num_cp
     num_cp_layer_in = Input(shape=(1,), name='num_cp')
@@ -495,7 +540,9 @@ def build_dense_model(num_cp_dense_layers=(None,None),
     num_cp_layer_h21 = Lambda(lambda x: x, name='num_cp_h21')(num_cp_layer_in)
     
     for n in range(len(num_cp_dense_layers[0])):
-        num_cp_layer_h11 = Dense(num_cp_dense_layers[0][n])(num_cp_layer_h11)
+        num_cp_layer_h11 = Dense(num_cp_dense_layers[0][n],
+                                 kernel_regularizer=reg_h11
+                                )(num_cp_layer_h11)
         if activation == 'relu':
             num_cp_layer_h11 = Activation('relu')(num_cp_layer_h11)
         else:
@@ -506,7 +553,9 @@ def build_dense_model(num_cp_dense_layers=(None,None),
         num_cp_layer_h11 = Dropout(rate=dropout[0])(num_cp_layer_h11)
         
     for n in range(len(num_cp_dense_layers[1])):
-        num_cp_layer_h21 = Dense(num_cp_dense_layers[1][n])(num_cp_layer_h21)
+        num_cp_layer_h21 = Dense(num_cp_dense_layers[1][n],
+                                 kernel_regularizer=reg_h21
+                                )(num_cp_layer_h21)
         if activation == 'relu':
             num_cp_layer_h21 = Activation('relu')(num_cp_layer_h21)
         else:
@@ -522,7 +571,9 @@ def build_dense_model(num_cp_dense_layers=(None,None),
     dim_cp_layer_h21 = Lambda(lambda x: x, name='dim_cp_h21')(dim_cp_layer_in)
     
     for n in range(len(dim_cp_dense_layers[0])):
-        dim_cp_layer_h11 = Dense(dim_cp_dense_layers[0][n])(dim_cp_layer_h11)
+        dim_cp_layer_h11 = Dense(dim_cp_dense_layers[0][n],
+                                 kernel_regularizer=reg_h11
+                                )(dim_cp_layer_h11)
         if activation == 'relu':
             dim_cp_layer_h11 = Activation('relu')(dim_cp_layer_h11)
         else:
@@ -533,7 +584,9 @@ def build_dense_model(num_cp_dense_layers=(None,None),
         dim_cp_layer_h11 = Dropout(rate=dropout[0])(dim_cp_layer_h11)
         
     for n in range(len(dim_cp_dense_layers[1])):
-        dim_cp_layer_h21 = Dense(dim_cp_dense_layers[1][n])(dim_cp_layer_h21)
+        dim_cp_layer_h21 = Dense(dim_cp_dense_layers[1][n],
+                                 kernel_regularizer=reg_h21
+                                )(dim_cp_layer_h21)
         if activation == 'relu':
             dim_cp_layer_h21 = Activation('relu')(dim_cp_layer_h21)
         else:
@@ -549,7 +602,9 @@ def build_dense_model(num_cp_dense_layers=(None,None),
     dim_h0_layer_h21 = Lambda(lambda x: x, name='dim_h0_amb_h21')(dim_h0_layer_in)
     
     for n in range(len(dim_h0_amb_dense_layers[0])):
-        dim_h0_layer_h11 = Dense(dim_h0_amb_dense_layers[0][n])(dim_h0_layer_h11)
+        dim_h0_layer_h11 = Dense(dim_h0_amb_dense_layers[0][n],
+                                 kernel_regularizer=reg_h11
+                                )(dim_h0_layer_h11)
         if activation == 'relu':
             dim_h0_layer_h11 = Activation('relu')(dim_h0_layer_h11)
         else:
@@ -560,7 +615,9 @@ def build_dense_model(num_cp_dense_layers=(None,None),
         dim_h0_layer_h11 = Dropout(rate=dropout[0])(dim_h0_layer_h11)
         
     for n in range(len(dim_h0_amb_dense_layers[1])):
-        dim_h0_layer_h21 = Dense(dim_h0_amb_dense_layers[1][n])(dim_h0_layer_h21)
+        dim_h0_layer_h21 = Dense(dim_h0_amb_dense_layers[1][n],
+                                 kernel_regularizer=reg_h21
+                                )(dim_h0_layer_h21)
         if activation == 'relu':
             dim_h0_layer_h21 = Activation('relu')(dim_h0_layer_h21)
         else:
@@ -576,7 +633,9 @@ def build_dense_model(num_cp_dense_layers=(None,None),
     matrix_layer_h21 = Lambda(lambda x: x, name='matrix_h21')(matrix_layer_in)
     
     for n in range(len(matrix_dense_layers[0])):
-        matrix_layer_h11 = Dense(matrix_dense_layers[0][n])(matrix_layer_h11)
+        matrix_layer_h11 = Dense(matrix_dense_layers[0][n],
+                                 kernel_regularizer=reg_h11
+                                )(matrix_layer_h11)
         if activation == 'relu':
             matrix_layer_h11 = Activation('relu')(matrix_layer_h11)
         else:
@@ -587,7 +646,9 @@ def build_dense_model(num_cp_dense_layers=(None,None),
         matrix_layer_h11 = Dropout(rate=dropout[0])(matrix_layer_h11)
         
     for n in range(len(matrix_dense_layers[1])):
-        matrix_layer_h21 = Dense(matrix_dense_layers[1][n])(matrix_layer_h21)
+        matrix_layer_h21 = Dense(matrix_dense_layers[1][n],
+                                 kernel_regularizer=reg_h21
+                                )(matrix_layer_h21)
         if activation == 'relu':
             matrix_layer_h21 = Activation('relu')(matrix_layer_h21)
         else:

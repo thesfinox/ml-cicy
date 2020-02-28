@@ -1,8 +1,8 @@
 # Machine Learning for Complete Intersection Calabi-Yau Manifolds
 #
-# XGB:
+# XGBRF:
 #
-#   Compute the XGB model (Boosted Tree) for the data.
+#   Compute the RandomForest model using XGBoost for the data.
 #
 # AUTHOR: Riccardo Finotello
 #
@@ -19,7 +19,7 @@ from joblib                  import load, dump
 # from sklearn.preprocessing   import StandardScaler
 from sklearn.metrics         import make_scorer
 from sklearn.model_selection import KFold, train_test_split
-from xgboost                 import XGBRegressor
+from sklearn.ensemble        import RandomForestRegressor
 from skopt                   import BayesSearchCV
 from skopt.space             import Categorical, Real, Integer
 from toolset.libutilities    import *
@@ -36,7 +36,7 @@ if path.isdir(MOD_PATH) is False:
 def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
 
     # Print banner
-    print('\n----- BOOSTED TREES -----')
+    print('\n----- RANDOM FOREST -----')
 
     # Set random seed
     RAND = seed
@@ -137,47 +137,39 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
     # df_eng_h21_test  = std_scal.transform(df_eng_h21_test)
 
     # Compute the algorithm
-    search_params = {'n_estimators':     Integer(100, 500,
-                                                 prior='uniform'),
-                     'max_depth':        Integer(2, 20,
-                                                 prior='uniform'),
-                     'learning_rate':    Real(1e-4, 1e0,
-                                              base=10,
-                                              prior='log-uniform'),
-                     'subsample':        Real(0.6, 1.0,
-                                              prior='uniform'),
-                     'reg_alpha':        Real(1e-2, 1e2,
-                                              base=10,
-                                              prior='log-uniform'),
-                     'reg_lambda':       Real(1e-2, 1e2,
-                                              base=10,
-                                              prior='log-uniform'),
-                     'colsample_bynode': Real(0.1, 0.9, 
-                                              prior='uniform')
+    search_params = {'n_estimators':      Integer(2, 75,
+                                                  prior='uniform'),
+                     'criterion':         Categorical(['friedman_mse', 'mae']),
+                     'min_samples_split': Integer(2, 10,
+                                                  prior='uniform'),
+                     'min_samples_leaf':  Integer(1, 50,
+                                                  prior='uniform'),
+                     'max_depth':         Integer(2, 20,
+                                                  prior='uniform')
                     }
 
-    xgb_h11 = BayesSearchCV(estimator=XGBRegressor(objective='reg:squarederror',
-                                                   tree_method='hist',
-                                                   random_state=RAND),
+    rnd_for_h11 = BayesSearchCV(estimator=RandomForestRegressor(\
+                                            n_jobs=-1,
+                                            random_state=RAND),
                               search_spaces=search_params,
                               n_iter=n_iter,
                               scoring=make_scorer(accuracy_score,
                                                   greater_is_better=True,
                                                   rounding=rounding),
                               cv=cv,
-                              n_jobs=-1,
+                              n_jobs=1,
                               verbose=0
                              )
-    xgb_h21 = BayesSearchCV(estimator=XGBRegressor(objective='reg:squarederror',
-                                                   tree_method='hist',
-                                                   random_state=RAND),
+    rnd_for_h21 = BayesSearchCV(estimator=RandomForestRegressor(\
+                                            n_jobs=-1,
+                                            random_state=RAND),
                               search_spaces=search_params,
                               n_iter=n_iter,
                               scoring=make_scorer(accuracy_score,
                                                   greater_is_better=True,
                                                   rounding=rounding),
                               cv=cv,
-                              n_jobs=-1,
+                              n_jobs=1,
                               verbose=0
                              )
 
@@ -185,18 +177,18 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
     # MATRIX BASELINE                   #
     #####################################
     print('\nFitting the matrix baseline on h_11...')
-    xgb_h11.fit(df_matrix_train, h11_labels_train)
-    gridcv_score(xgb_h11, rounding=rounding)
-    prediction_score(xgb_h11,
+    rnd_for_h11.fit(df_matrix_train, h11_labels_train)
+    gridcv_score(rnd_for_h11, rounding=rounding)
+    prediction_score(rnd_for_h11,
                      df_matrix_test,
                      h11_labels_test,
                      use_best_estimator=True,
                      rounding=rounding)
 
     print('Fitting the matrix baseline on h_21...')
-    xgb_h21.fit(df_matrix_train, h21_labels_train)
-    gridcv_score(xgb_h21, rounding=rounding)
-    prediction_score(xgb_h21,
+    rnd_for_h21.fit(df_matrix_train, h21_labels_train)
+    gridcv_score(rnd_for_h21, rounding=rounding)
+    prediction_score(rnd_for_h21,
                      df_matrix_test,
                      h21_labels_test,
                      use_best_estimator=True,
@@ -208,20 +200,20 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
 
     count_plot(plot,
                error_diff(h11_labels_test,
-                          xgb_h11.best_estimator_.predict(df_matrix_test),
+                          rnd_for_h11.best_estimator_.predict(df_matrix_test),
                           rounding=rounding),
                title='Error distribution on the test set',
                xlabel='Difference from real value',
                legend='$h_{11}$')
     count_plot(plot,
                error_diff(h21_labels_test,
-                          xgb_h21.best_estimator_.predict(df_matrix_test),
+                          rnd_for_h21.best_estimator_.predict(df_matrix_test),
                           rounding=rounding),
                title='Error distribution on the test set',
                xlabel='Difference from real value',
                legend='$h_{21}$')
 
-    save_fig('xgb_error_matrix')
+    save_fig('rnd_for_error_matrix')
     # plt.show()
     plt.close(fig)
 
@@ -229,18 +221,18 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
     # NUM_CP BASELINE                   #
     #####################################
     print('\nFitting the num_cp baseline on h_11...')
-    xgb_h11.fit(df_num_cp_train, h11_labels_train)
-    gridcv_score(xgb_h11, rounding=rounding)
-    prediction_score(xgb_h11,
+    rnd_for_h11.fit(df_num_cp_train, h11_labels_train)
+    gridcv_score(rnd_for_h11, rounding=rounding)
+    prediction_score(rnd_for_h11,
                      df_num_cp_test,
                      h11_labels_test,
                      use_best_estimator=True,
                      rounding=rounding)
 
     print('Fitting the num_cp baseline on h_21...')
-    xgb_h21.fit(df_num_cp_train, h21_labels_train)
-    gridcv_score(xgb_h21, rounding=rounding)
-    prediction_score(xgb_h21,
+    rnd_for_h21.fit(df_num_cp_train, h21_labels_train)
+    gridcv_score(rnd_for_h21, rounding=rounding)
+    prediction_score(rnd_for_h21,
                      df_num_cp_test,
                      h21_labels_test,
                      use_best_estimator=True,
@@ -252,20 +244,20 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
 
     count_plot(plot,
                error_diff(h11_labels_test,
-                          xgb_h11.best_estimator_.predict(df_num_cp_test),
+                          rnd_for_h11.best_estimator_.predict(df_num_cp_test),
                           rounding=rounding),
                title='Error distribution on the test set',
                xlabel='Difference from real value',
                legend='$h_{11}$')
     count_plot(plot,
                error_diff(h21_labels_test,
-                          xgb_h21.best_estimator_.predict(df_num_cp_test),
+                          rnd_for_h21.best_estimator_.predict(df_num_cp_test),
                           rounding=rounding),
                title='Error distribution on the test set',
                xlabel='Difference from real value',
                legend='$h_{21}$')
 
-    save_fig('xgb_error_num_cp')
+    save_fig('rnd_for_error_num_cp')
     # plt.show()
     plt.close(fig)
 
@@ -273,18 +265,18 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
     # DIM_CP BASELINE                   #
     #####################################
     print('\nFitting the dim_cp baseline on h_11...')
-    xgb_h11.fit(df_dim_cp_train, h11_labels_train)
-    gridcv_score(xgb_h11, rounding=rounding)
-    prediction_score(xgb_h11,
+    rnd_for_h11.fit(df_dim_cp_train, h11_labels_train)
+    gridcv_score(rnd_for_h11, rounding=rounding)
+    prediction_score(rnd_for_h11,
                      df_dim_cp_test,
                      h11_labels_test,
                      use_best_estimator=True,
                      rounding=rounding)
 
     print('Fitting the dim_cp baseline on h_21...')
-    xgb_h21.fit(df_dim_cp_train, h21_labels_train)
-    gridcv_score(xgb_h21, rounding=rounding)
-    prediction_score(xgb_h21,
+    rnd_for_h21.fit(df_dim_cp_train, h21_labels_train)
+    gridcv_score(rnd_for_h21, rounding=rounding)
+    prediction_score(rnd_for_h21,
                      df_dim_cp_test,
                      h21_labels_test,
                      use_best_estimator=True,
@@ -296,20 +288,20 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
 
     count_plot(plot,
                error_diff(h11_labels_test,
-                          xgb_h11.best_estimator_.predict(df_dim_cp_test),
+                          rnd_for_h11.best_estimator_.predict(df_dim_cp_test),
                           rounding=rounding),
                title='Error distribution on the test set',
                xlabel='Difference from real value',
                legend='$h_{11}$')
     count_plot(plot,
                error_diff(h21_labels_test,
-                          xgb_h21.best_estimator_.predict(df_dim_cp_test),
+                          rnd_for_h21.best_estimator_.predict(df_dim_cp_test),
                           rounding=rounding),
                title='Error distribution on the test set',
                xlabel='Difference from real value',
                legend='$h_{21}$')
 
-    save_fig('xgb_error_dim_cp')
+    save_fig('rnd_for_error_dim_cp')
     # plt.show()
     plt.close(fig)
 
@@ -317,18 +309,18 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
     # FEATURE ENGINEERING               #
     #####################################
     print('\nFitting the feature engineered dataset on h_11...')
-    xgb_h11.fit(df_eng_h11_train, h11_labels_train)
-    gridcv_score(xgb_h11, rounding=rounding)
-    prediction_score(xgb_h11,
+    rnd_for_h11.fit(df_eng_h11_train, h11_labels_train)
+    gridcv_score(rnd_for_h11, rounding=rounding)
+    prediction_score(rnd_for_h11,
                      df_eng_h11_test,
                      h11_labels_test,
                      use_best_estimator=True,
                      rounding=rounding)
 
     print('Fitting the feature engineered dataset on h_21...')
-    xgb_h21.fit(df_eng_h21_train, h21_labels_train)
-    gridcv_score(xgb_h21, rounding=rounding)
-    prediction_score(xgb_h21,
+    rnd_for_h21.fit(df_eng_h21_train, h21_labels_train)
+    gridcv_score(rnd_for_h21, rounding=rounding)
+    prediction_score(rnd_for_h21,
                      df_eng_h21_test,
                      h21_labels_test,
                      use_best_estimator=True,
@@ -340,27 +332,27 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
 
     count_plot(plot,
                error_diff(h11_labels_test,
-                          xgb_h11.best_estimator_.predict(df_eng_h11_test),
+                          rnd_for_h11.best_estimator_.predict(df_eng_h11_test),
                           rounding=rounding),
                title='Error distribution on the test set',
                xlabel='Difference from real value',
                legend='$h_{11}$')
     count_plot(plot,
                error_diff(h21_labels_test,
-                          xgb_h21.best_estimator_.predict(df_eng_h21_test),
+                          rnd_for_h21.best_estimator_.predict(df_eng_h21_test),
                           rounding=rounding),
                title='Error distribution on the test set',
                xlabel='Difference from real value',
                legend='$h_{21}$')
 
-    save_fig('xgb_error_eng')
+    save_fig('rnd_for_error_eng')
     # plt.show()
     plt.close(fig)
 
     # Saving the feature engineered models
     print('\nSaving models...')
-    MOD_FILE = path.join(MOD_PATH, 'xgb_h11.joblib.xz')
-    dump(xgb_h11.best_estimator_, MOD_FILE, compress=('xz',9))
-    MOD_FILE = path.join(MOD_PATH, 'xgb_h21.joblib.xz')
-    dump(xgb_h21.best_estimator_, MOD_FILE, compress=('xz',9))
+    MOD_FILE = path.join(MOD_PATH, 'rnd_for_h11.joblib.xz')
+    dump(rnd_for_h11.best_estimator_, MOD_FILE, compress=('xz',9))
+    MOD_FILE = path.join(MOD_PATH, 'rnd_for_h21.joblib.xz')
+    dump(rnd_for_h21.best_estimator_, MOD_FILE, compress=('xz',9))
     print('Models saved!')

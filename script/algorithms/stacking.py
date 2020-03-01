@@ -16,6 +16,8 @@ assert np.__version__ >  '1.16'   # to avoid issues with pytables
 assert sk.__version__ >= '0.22.1' # for the recent implementation
 assert tf.__version__ >= '2.0.0'  # newest version
 
+import keras.backend as K
+
 from os                          import path
 from joblib                      import load, dump
 from sklearn.preprocessing       import StandardScaler, \
@@ -46,6 +48,20 @@ from tensorflow.keras.utils      import plot_model
 from toolset.libutilities        import *
 from toolset.libplot             import *
 from toolset.libnn               import *
+
+gpus = tf.config.experimental.list_physical_devices('GPU')   # set memory growth to avoid taking the entire GPU RAM
+if gpus:
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+        print('\nGPU setup: ',
+              '{:d} physical GPUs, '.format(len(gpus)),
+              '{:d} logical GPUs.'.format(len(logical_gpus)))
+    except RuntimeError as e:
+        print(e)
+else:
+    print('\nNo GPUs in the setup!')
 
 # Set working directories
 ROOT_DIR = '.' # root directory
@@ -493,18 +509,22 @@ def compute(df_name, n_iter=30, seed=42):
     print('    Fitting the Sequential Keras models...')
     seq_h11.fit(x=K.cast(df_matrix_train.reshape(-1,12,15,1), dtype='float64'),
                 y=K.cast(df_labels_train['h11'], dtype='float64'),
+                validation_split=0.2,
                 batch_size=32,
                 epochs=300,
                 verbose=0
                )
     seq_h21.fit(x=K.cast(df_matrix_train.reshape(-1,12,15,1), dtype='float64'),
                 y=K.cast(df_labels_train['h21'], dtype='float64'),
+                validation_split=0.2,
                 batch_size=32,
                 epochs=300,
                 verbose=0
                )
     seq_h11 = load_model(path.join(MOD_PATH, 'cnn_matrix_sequential_h11.h5'))
     seq_h21 = load_model(path.join(MOD_PATH, 'cnn_matrix_sequential_h21.h5'))
+
+    K.clear_session()
 
     print('    Fitting the Functional Conv2D Keras models...')
     matrix_functional.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1),
@@ -517,11 +537,14 @@ def compute(df_name, n_iter=30, seed=42):
                                     dtype='float64')],
                           y=[K.cast(df_labels_train['h11'], dtype='float64'),
                              K.cast(df_labels_train['h21'], dtype='float64')],
+                          validation_split=0.2,
                           batch_size=32,
                           epochs=300,
                           verbose=0
                          )
     matrix_functional = load_model(path.join(MOD_PATH, 'cnn_functional.h5'))
+
+    K.clear_session()
 
     print('    Fitting the Functional Conv1D Keras models...')
     matrix_functional_pca.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1),
@@ -534,11 +557,14 @@ def compute(df_name, n_iter=30, seed=42):
                                         dtype='float64')],
                               y=[K.cast(df_labels_train['h11'], dtype='float64'),
                                  K.cast(df_labels_train['h21'], dtype='float64')],
+                              validation_split=0.2,
                               batch_size=32,
                               epochs=300,
                               verbose=0
                              )
     matrix_functional_pca = load_model(path.join(MOD_PATH, 'cnn_functional_pca.h5'))
+
+    K.clear_session()
 
     print('    Fitting the Functional Dense Keras models...')
     matrix_functional_pca_dense.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1), 
@@ -553,12 +579,15 @@ def compute(df_name, n_iter=30, seed=42):
                                               dtype='float64'),
                                        K.cast(df_labels_train['h21'],
                                               dtype='float64')],
+                                    validation_split=0.2,
                                     batch_size=32,
                                     epochs=300,
                                     verbose=0
                                    )
     matrix_functional_pca_dense = load_model(path.join(MOD_PATH,
                                                 'cnn_functional_pca_dense.h5'))
+
+    K.clear_session()
 
     print('End of the training procedure!')
 
@@ -1058,62 +1087,6 @@ def compute(df_name, n_iter=30, seed=42):
              h21_predictions_test,
              df_labels_test['h21'].values,
              rounding=rounding_svr_rbf)
-
-    # Define a SVR with polynomial kernel
-    search_params_svr_poly = {'degree':    Integer(2, 4),
-                              'coef0':     Real(0.0, 10.0,
-                                                prior='uniform'),
-                              'C':         Real(1e-4, 1e5,
-                                                base=10,
-                                                prior='log-uniform'),
-                              'gamma':     Real(1e-6, 1e2,
-                                                base=10,
-                                                prior='log-uniform'),
-                              'epsilon':   Real(1e-5, 1e1,
-                                                base=10,
-                                                prior='log-uniform'),
-                              'shrinking': Integer(False, True)
-                             }
-    rounding_svr_poly = np.rint
-
-    meta_svr_poly_h11 = BayesSearchCV(estimator=SVR(kernel='poly', max_iter=15000),
-                                      search_spaces=search_params_svr_poly,
-                                      n_iter=n_iter,
-                                      scoring=make_scorer(accuracy_score,
-                                                          greater_is_better=True,
-                                                          rounding=rounding_svr_poly),
-                                      cv=meta_cv,
-                                      n_jobs=-1,
-                                      verbose=0
-                                     )
-    meta_svr_poly_h21 = BayesSearchCV(estimator=SVR(kernel='poly', max_iter=15000),
-                                      search_spaces=search_params_svr_poly,
-                                      n_iter=n_iter,
-                                      scoring=make_scorer(accuracy_score,
-                                                          greater_is_better=True,
-                                                          rounding=rounding_svr_poly),
-                                      cv=meta_cv,
-                                      n_jobs=-1,
-                                      verbose=0
-                                     )
-
-    print('\n\nFitting the SVR(kernel=\'poly\') for h_11...')
-    meta_fit(meta_svr_poly_h11,
-             scalers,
-             h11_predictions_val,
-             df_labels_val['h11'].values,
-             h11_predictions_test,
-             df_labels_test['h11'].values,
-             rounding=rounding_svr_poly)
-
-    print('\nFitting the SVR(kernel=\'poly\') for h_21...')
-    meta_fit(meta_svr_poly_h21,
-             scalers,
-             h21_predictions_val,
-             df_labels_val['h21'].values,
-             h21_predictions_test,
-             df_labels_test['h21'].values,
-             rounding=rounding_svr_poly)
 
     # Define a RandomForest
     search_params_rnd_for = {'n_estimators':      Integer(2, 75,

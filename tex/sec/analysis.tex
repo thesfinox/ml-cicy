@@ -1,0 +1,42 @@
+\subsection{Training and Test Sets}
+    In the analysis we first split the entire dataset into a training and a test subsets. We retain 10\% of the data as test while we take 90\% of the dataset as training set. We also implement cross-validation for the evaluation of the algorithms (not the neural networks): we use a \texttt{KFold} approach with 9 splits, which amount to using 80\% of the total dataset as training set while retaining another 10\% as validation set for each of the 9 folds. For the neural networks we will simply use holdout validation with 10\% of the total data as validation set and 80\% as training.
+    
+\subsection{Metrics and Evaluation}
+    While we are interested in a regression task, the final results are however related to the prediction of integer numbers, as $h_{11} \in \mathds{R}$ and $h_{21} \in \mathds{R}$, typical of a classification task. We choose to implement a custom metric using the \texttt{make\_scorer} present in the \textit{Scikit} library and which can be used inside \texttt{GridSearchCV} and similar hyperparameter optimization algorithms: we use the accuracy of the fitted estimator after rounding the result. In general we consider the \textit{floor} of the predictions, exception made\footnote{Actually also the second level of the stacked learner uses rounding to next integer.} for \texttt{SVR} and the neural networks which use the rounding to next integer.
+
+\subsection{Machine Learning Analysis}
+    For the analysis we consider the following algorithms:
+    \begin{itemize}
+        \item \textit{Scikit-learn} implementations:
+            \subitem \texttt{LinearRegression},
+            \subitem \texttt{Lasso},
+            \subitem \texttt{ElasticNet},
+            \subitem \texttt{Ridge},
+            \subitem \texttt{LinearSVR},
+            \subitem \texttt{SVR} (with \textit{rbf} kernel);
+        \item \textit{XGBoost} implementations:
+            \subitem \texttt{XGBRegressor} (equivalent to \texttt{GradientBoostingRegressor} in the \textit{Scikit} implementation),
+            \subitem \texttt{XGBRFRegressor} (equivalent to \texttt{RandomForestRegressor} in the \textit{Scikit} implementation).
+    \end{itemize}
+    The reason behind the choice of the algorithms is related to the previous data visualisation and pre-analysis. In particular we study the correlation of the data using several linear models implementing different types of regression: specifically we are interested in \texttt{Lasso} and \texttt{Ridge} models as they implement $l1$ and $l2$ regularisation, respectively, while \texttt{ElasticNet} implements both. At the same time, given the geometrical disposition of the data it may be worth to try a linear approach to \textit{Support Vectors} and a Gaussian kernel. The choice of \textit{XGBoost} for the decision trees is related to speed and simplicity in the implementation which can be easily moved to the GPU for evaluation (even though in this particular case, all computations have been performed on CPU): they also implement histogram-based methods for the trees which recently proved to be faster and reliable \cite{NIPS2017_6907}.
+
+    For each algorithm we first compute a baseline using just the components of the configuration matrix, we then compute two intermediate results using \texttt{num\_cp} only and \texttt{dim\_cp} only. We then compute the algorithm with the engineered dataset and compare the improvement to the previous results. While fitting the algorithms, we implement Bayesan search of the best hyperparameter using the \texttt{BayesSearchCV} algorithms provided by the \textit{Scikit-optimize} library\footnote{Since the \texttt{LinearRegression} has only two usable hyperparameters (namely \texttt{fit\_intercept} and \texttt{normalize}), we used the usual \texttt{GridSearchCV} only in this case.}: while \texttt{GridSearchCV} would have been impractical for most algorithms, the alternative \texttt{RandomizedSearchCV} does not take advantage of the search space. In this particular analysis \texttt{BayesSearchCV} significantly helps especially in fine tuning the hyperparameter space of algorithms, such as \texttt{SVR} and \texttt{XGBRFRegressor}, which undergo large variations due to different hyperparameter choices. The best algorithms is then chosen based on the cross-validation results (we use 50 iterations of the \texttt{BayesSearchCV} since it is faster than \texttt{RandomizedSearchCV} for almost all the algorithms exception made for the decision trees which undertake only 15 iterations, due to the amount of RAM needed to load the dataset).
+
+\subsection{Neural Networks}
+    We then implement the following neural networks (NN) architectures:
+    \begin{itemize}
+        \item \texttt{Sequential} model using only the configuration matrix,
+        \item \texttt{Functional} model using the configuration matrix and the engineered features (not the \texttt{PCA} results, though),
+        \item \texttt{Functional} model using the components of the \texttt{PCA} of the matrix (as a vector to be used with \texttt{Conv1D} layers) in place of the matrix itself,
+        \item \texttt{Functional} model using the components of the \texttt{PCA} of the matrix (as separate scalar features to be used with only \texttt{Dense} layers) in place of the matrix itself.
+    \end{itemize}
+    In this case we do not use any automatic optimisation for the hyperparameters mainly due to hardware and time restrictions. However we use holdout validation as a testing ground for the architectures. The main differences between the architectures will be their implementations: in the first two cases we will use \texttt{Conv2D} layers for the matrix components in order to apply kernel transformation and construct possible patterns; in the third case we use \texttt{Conv1D} layers to treat the \texttt{PCA} as a vector, while in the fourth case we only use \texttt{Dense} layers in the architecture.
+    
+\subsection{Ensemble Learning}
+    Eventually, we also implement stacked learning using the previously mentioned algorithms and neural network architectures. In this case we keep the same test set, while we split the training set in half into two folds for the two level predictions. We then train the algorithms on the first fold as we did in the previous part of the analysis. We then use the algorithms to make predictions on the second set which we use to train several meta learner to be tested against the test set. In particular we compare:
+    \begin{itemize}
+        \item \texttt{LinearRegression},
+        \item \texttt{SVR} (with \textit{rbf} kernel),
+        \item \texttt{SVR} (with \textit{poly} kernel),
+        \item \texttt{RandomForestRegressor}.
+    \end{itemize}

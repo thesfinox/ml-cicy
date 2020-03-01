@@ -26,15 +26,10 @@ from sklearn.metrics             import make_scorer
 from sklearn.model_selection     import train_test_split, \
                                         cross_val_predict, \
                                         KFold, \
-                                        GridSearchCV, \
-                                        KFold
-from sklearn.linear_model        import LinearRegression, \
-                                        Lasso, \
-                                        Ridge, \
-                                        ElasticNet
-from sklearn.svm                 import SVR, LinearSVR
+                                        GridSearchCV
+from sklearn.linear_model        import LinearRegression
+from sklearn.svm                 import SVR
 from sklearn.ensemble            import RandomForestRegressor
-from xgboost                     import XGBRegressor, XGBRFRegressor
 from skopt                       import BayesSearchCV
 from skopt.space                 import Categorical, Real, Integer
 from tensorflow.keras            import backend as K
@@ -85,303 +80,51 @@ def compute(df_name, n_iter=30, seed=42):
     np.random.seed(RAND)
     tf.random.set_seed(RAND)
 
-    # Set cross-validation strategy
-    cv = KFold(n_splits=5, shuffle=True, random_state=RAND)
-
     # Load models
-    print('\nDefining models:')
-    print('    Define LinearRegression...')
-    search_params = {'fit_intercept': [ True, False ],
-                     'normalize':     [ True, False ]
-                    }
+    print('\nLoading models:')
+    print('    Loading LinearRegressor...')
+    lin_reg_h11 = load(path.join(MOD_PATH, 'lin_reg_h11.joblib.xz'))
+    lin_reg_h21 = load(path.join(MOD_PATH, 'lin_reg_h21.joblib.xz'))
 
-    lin_reg_h11 = GridSearchCV(estimator=LinearRegression(),
-                               param_grid=search_params,
-                               scoring=make_scorer(accuracy_score,
-                                                   greater_is_better=True,
-                                                   rounding=np.floor),
-                               cv=cv,
-                               n_jobs=-1,
-                               verbose=0
-                              )
-    lin_reg_h21 = GridSearchCV(estimator=LinearRegression(),
-                               param_grid=search_params,
-                               scoring=make_scorer(accuracy_score,
-                                                   greater_is_better=True,
-                                                   rounding=np.floor),
-                               cv=cv,
-                               n_jobs=-1,
-                               verbose=0
-                              )
+    print('    Loading Lasso...')
+    lasso_h11   = load(path.join(MOD_PATH, 'lasso_h11.joblib.xz'))
+    lasso_h21   = load(path.join(MOD_PATH, 'lasso_h21.joblib.xz'))
 
-    print('    Define Lasso...')
-    search_params = {'alpha':         Real(1e-6, 1e2,
-                                           base=10,
-                                           prior='log-uniform'),
-                     'fit_intercept': Integer(False, True),
-                     'normalize':     Integer(False, True),
-                     'positive':      Integer(False, True)
-                    }
+    print('    Loading ElasticNet...')
+    el_net_h11  = load(path.join(MOD_PATH, 'el_net_h11.joblib.xz'))
+    el_net_h21  = load(path.join(MOD_PATH, 'el_net_h21.joblib.xz'))
 
-    lasso_h11 = BayesSearchCV(estimator=Lasso(max_iter=15000,
-                                              random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=n_iter,
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
-    lasso_h21 = BayesSearchCV(estimator=Lasso(max_iter=15000,
-                                              random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=n_iter,
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
+    print('    Loading Ridge...')
+    ridge_h11   = load(path.join(MOD_PATH, 'ridge_h11.joblib.xz'))
+    ridge_h21   = load(path.join(MOD_PATH, 'ridge_h21.joblib.xz'))
 
-    print('    Define ElasticNet...')
-    search_params = {'alpha':         Real(1e-6, 1e2,
-                                           base=10,
-                                           prior='log-uniform'),
-                     'l1_ratio':      Real(0.0, 1.0,
-                                           prior='uniform'),
-                     'fit_intercept': Integer(False, True),
-                     'normalize':     Integer(False, True),
-                     'positive':      Integer(False, True)
-                    }
+    print('    Loading LinearSVR...')
+    lin_svr_h11 = load(path.join(MOD_PATH, 'lin_svr_h11.joblib.xz'))
+    lin_svr_h21 = load(path.join(MOD_PATH, 'lin_svr_h21.joblib.xz'))
 
-    el_net_h11 = BayesSearchCV(estimator=ElasticNet(max_iter=15000,
-                                                    random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=n_iter,
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
-    el_net_h21 = BayesSearchCV(estimator=ElasticNet(max_iter=15000,
-                                                    random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=n_iter,
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
+    print('    Loading SVR...')
+    svr_rbf_h11 = load(path.join(MOD_PATH, 'svr_rbf_h11.joblib.xz'))
+    svr_rbf_h21 = load(path.join(MOD_PATH, 'svr_rbf_h21.joblib.xz'))
 
-    print('    Define Ridge...')
-    search_params = {'alpha':         Real(1e-6, 1e2,
-                                           base=10,
-                                           prior='log-uniform'),
-                     'fit_intercept': Integer(False, True),
-                     'normalize':     Integer(False, True)
-                    }
+    print('    Loading XGBRegressor...')
+    xgb_h11     = load(path.join(MOD_PATH, 'xgb_h11.joblib.xz'))
+    xgb_h21     = load(path.join(MOD_PATH, 'xgb_h21.joblib.xz'))
 
-    ridge_h11 = BayesSearchCV(estimator=Ridge(max_iter=15000,
-                                              random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=n_iter,
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
-    ridge_h21 = BayesSearchCV(estimator=Ridge(max_iter=15000,
-                                              random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=n_iter,
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
+    print('    Loading XGBRFRegressor...')
+    xgbrf_h11   = load(path.join(MOD_PATH, 'xgbrf_h11.joblib.xz'))
+    xgbrf_h21   = load(path.join(MOD_PATH, 'xgbrf_h21.joblib.xz'))
 
-    print('    Define LinearSVR...')
-    search_params = {'C':                 Real(1e-4, 1e4,
-                                               base=10,
-                                               prior='log-uniform'),
-                     'intercept_scaling': Real(1e-2, 1e2,
-                                               base=10,
-                                               prior='log-uniform'),
-                     'fit_intercept':     Integer(False, True),
-                     'loss':              Categorical(\
-                                            ['epsilon_insensitive',
-                                             'squared_epsilon_insensitive'])
-                    }
-
-    lin_svr_h11 = BayesSearchCV(estimator=LinearSVR(max_iter=15000,
-                                                    random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=n_iter,
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
-    lin_svr_h21 = BayesSearchCV(estimator=LinearSVR(max_iter=15000,
-                                                    random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=n_iter,
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
-
-    print('    Define SVR...')
-    search_params = {'C':         Real(1e-4, 1e4,
-                                       base=10,
-                                       prior='log-uniform'),
-                     'gamma':     Real(1e-6, 1e2,
-                                       base=10,
-                                       prior='log-uniform'),
-                     'epsilon':   Real(1e-5, 1e1,
-                                       base=10,
-                                       prior='log-uniform'),
-                     'shrinking': Integer(False, True)
-                    }
-
-    svr_rbf_h11 = BayesSearchCV(estimator=SVR(kernel='rbf',
-                                              max_iter=15000),
-                              search_spaces=search_params,
-                              n_iter=n_iter,
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.rint),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
-    svr_rbf_h21 = BayesSearchCV(estimator=SVR(kernel='rbf',
-                                              max_iter=15000),
-                              search_spaces=search_params,
-                              n_iter=n_iter,
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.rint),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
-
-    print('    Define XGBRegressor...')
-    search_params = {'n_estimators':     Integer(100, 500,
-                                                 prior='uniform'),
-                     'max_depth':        Integer(2, 20,
-                                                 prior='uniform'),
-                     'learning_rate':    Real(1e-4, 1e0,
-                                              base=10,
-                                              prior='log-uniform'),
-                     'subsample':        Real(0.6, 1.0,
-                                              prior='uniform'),
-                     'reg_alpha':        Real(1e-2, 1e2,
-                                              base=10,
-                                              prior='log-uniform'),
-                     'reg_lambda':       Real(1e-2, 1e2,
-                                              base=10,
-                                              prior='log-uniform'),
-                     'colsample_bynode': Real(0.1, 0.9, 
-                                              prior='uniform')
-                    }
-
-    xgb_h11 = BayesSearchCV(estimator=XGBRegressor(objective='reg:squarederror',
-                                                   tree_method='hist',
-                                                   random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=int(n_iter/3),
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
-    xgb_h21 = BayesSearchCV(estimator=XGBRegressor(objective='reg:squarederror',
-                                                   tree_method='hist',
-                                                   random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=int(n_iter/3),
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
-
-    print('    Define XGBRFRegressor...')
-    search_params = {'num_parallel_tree': Integer(2, 75,
-                                                  prior='uniform'),
-                     'max_depth':         Integer(2, 20,   
-                                                  prior='uniform'),
-                     'subsample':         Real(0.6, 1.0, 
-                                               prior='uniform'),
-                     'reg_alpha':         Real(1e-2, 1e2,
-                                               base=10,
-                                               prior='log-uniform'),
-                     'reg_lambda':        Real(1e-2, 1e2,
-                                               base=10,
-                                               prior='log-uniform'),
-                     'colsample_bynode':  Real(0.1, 0.9,
-                                               prior='uniform')
-                    }
-
-    xgbrf_h11 = BayesSearchCV(estimator=XGBRFRegressor(objective='reg:squarederror', 
-                                                       tree_method='hist',
-                                                       random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=int(n_iter/3),
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
-    xgbrf_h21 = BayesSearchCV(estimator=XGBRFRegressor(objective='reg:squarederror',
-                                                       tree_method='hist',
-                                                       random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=int(n_iter/3),
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
-
-    print('    Define the Sequential Keras model...')
-    seq_h11     = load_model(path.join(MOD_PATH,
-                                       'cnn_matrix_sequential_h11.h5'))
+    print('    Loading the Sequential Keras model...')
+    seq_h11     = load_model(path.join(MOD_PATH, 'cnn_matrix_sequential_h11.h5'))
     seq_h21     = load_model(path.join(MOD_PATH, 'cnn_matrix_sequential_h21.h5'))
 
-    print('    Define the Functional Keras model...')
+    print('    Loading the Functional Keras model...')
     matrix_functional           = load_model(path.join(MOD_PATH,
                                                        'cnn_functional.h5'))
-    print('    Define the Functional Keras model with PCA...')
+    print('    Loading the Functional Keras model with PCA...')
     matrix_functional_pca       = load_model(path.join(MOD_PATH,
                                                        'cnn_functional_pca.h5'))
-    print('    Define the Functional Keras model with PCA and Dense layers...')
+    print('    Loading the Functional Keras model with PCA and Dense layers...')
     matrix_functional_pca_dense = load_model(path.join(MOD_PATH,
                                                        'cnn_functional_pca_dense.h5'))
 
@@ -440,127 +183,105 @@ def compute(df_name, n_iter=30, seed=42):
                                                       random_state=RAND)
 
 
-    # Train the algorithms:
-    print('\nTraining models:')
-    print('    Fitting the LinearRegressor...')
-    lin_reg_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
-    lin_reg_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
-    lin_reg_h11 = lin_reg_h11.best_estimator_
-    lin_reg_h21 = lin_reg_h21.best_estimator_
+    # # Train the algorithms:
+    # print('\nTraining models:')
+    # print('    Fitting the LinearRegressor...')
+    # lin_reg_h11.fit(df_eng_h11_train, df_labels_train['h11'])
+    # lin_reg_h21.fit(df_eng_h21_train, df_labels_train['h21'])
 
-    print('    Fitting the Lasso...')
-    lasso_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
-    lasso_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
-    lasso_h11 = lasso_h11.best_estimator_
-    lasso_h21 = lasso_h21.best_estimator_
+    # print('    Fitting the Lasso...')
+    # lasso_h11.fit(df_eng_h11_train, df_labels_train['h11'])
+    # lasso_h21.fit(df_eng_h21_train, df_labels_train['h21'])
 
-    print('    Fitting the ElasticNet...')
-    el_net_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
-    el_net_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
-    el_net_h11 = el_net_h11.best_estimator_
-    el_net_h21 = el_net_h21.best_estimator_
+    # print('    Fitting the ElasticNet...')
+    # el_net_h11.fit(df_eng_h11_train, df_labels_train['h11'])
+    # el_net_h21.fit(df_eng_h21_train, df_labels_train['h21'])
 
-    print('    Fitting the Ridge...')
-    ridge_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
-    ridge_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
-    ridge_h11 = ridge_h11.best_estimator_
-    ridge_h21 = ridge_h21.best_estimator_
+    # print('    Fitting the Ridge...')
+    # ridge_h11.fit(df_eng_h11_train, df_labels_train['h11'])
+    # ridge_h21.fit(df_eng_h21_train, df_labels_train['h21'])
 
-    print('    Fitting the LinearSVR...')
-    lin_svr_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
-    lin_svr_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
-    lin_svr_h11 = lin_svr_h11.best_estimator_
-    lin_svr_h21 = lin_svr_h21.best_estimator_
+    # print('    Fitting the LinearSVR...')
+    # lin_svr_h11.fit(df_eng_h11_train, df_labels_train['h11'])
+    # lin_svr_h21.fit(df_eng_h21_train, df_labels_train['h21'])
 
-    print('    Fitting the SVR...')
-    svr_rbf_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
-    svr_rbf_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
-    svr_rbf_h11 = svr_rbf_h11.best_estimator_
-    svr_rbf_h21 = svr_rbf_h21.best_estimator_
+    # print('    Fitting the SVR...')
+    # svr_rbf_h11.fit(df_eng_h11_train, df_labels_train['h11'])
+    # svr_rbf_h21.fit(df_eng_h21_train, df_labels_train['h21'])
 
-    print('    Fitting the XGBRegressor...')
-    xgb_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
-    xgb_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
-    xgb_h11 = xgb_h11.best_estimator_
-    xgb_h21 = xgb_h21.best_estimator_
+    # print('    Fitting the XGBRegressor...')
+    # xgb_h11.fit(df_eng_h11_train, df_labels_train['h11'])
+    # xgb_h21.fit(df_eng_h21_train, df_labels_train['h21'])
 
-    print('    Fitting the XGBRFRegressor...')
-    xgbrf_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
-    xgbrf_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
-    xgbrf_h11 = xgbrf_h11.best_estimator_
-    xgbrf_h21 = xgbrf_h21.best_estimator_
+    # print('    Fitting the XGBRFRegressor...')
+    # xgbrf_h11.fit(df_eng_h11_train, df_labels_train['h11'])
+    # xgbrf_h21.fit(df_eng_h21_train, df_labels_train['h21'])
 
-    print('    Fitting the Sequential Keras models...')
-    seq_h11.fit(x=K.cast(df_matrix_train.reshape(-1,12,15,1), dtype='float64'),
-                y=K.cast(df_labels_train['h11'], dtype='float64'),
-                batch_size=32,
-                epochs=300,
-                verbose=0
-               )
-    seq_h21.fit(x=K.cast(df_matrix_train.reshape(-1,12,15,1), dtype='float64'),
-                y=K.cast(df_labels_train['h21'], dtype='float64'),
-                batch_size=32,
-                epochs=300,
-                verbose=0
-               )
-    seq_h11 = load_model(path.join(MOD_PATH, 'cnn_matrix_sequential_h11.h5'))
-    seq_h21 = load_model(path.join(MOD_PATH, 'cnn_matrix_sequential_h21.h5'))
+    # print('    Fitting the Sequential Keras models...')
+    # seq_h11.fit(x=K.cast(df_matrix_train.reshape(-1,12,15,1), dtype='float64'),
+    #             y=K.cast(df_labels_train['h11'], dtype='float64'),
+    #             batch_size=32,
+    #             epochs=300,
+    #             verbose=0
+    #            )
+    # seq_h21.fit(x=K.cast(df_matrix_train.reshape(-1,12,15,1), dtype='float64'),
+    #             y=K.cast(df_labels_train['h21'], dtype='float64'),
+    #             batch_size=32,
+    #             epochs=300,
+    #             verbose=0
+    #            )
 
-    print('    Fitting the Functional Conv2D Keras models...')
-    matrix_functional.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1),
-                                    dtype='float64'),
-                             K.cast(df_eng_h21_train[:,1:13].reshape(-1,12,1),
-                                    dtype='float64'),
-                             K.cast(df_eng_h21_train[:,13:28].reshape(-1,15,1),
-                                    dtype='float64'),
-                             K.cast(df_matrix_train.reshape(-1,12,15,1),
-                                    dtype='float64')],
-                          y=[K.cast(df_labels_train['h11'], dtype='float64'),
-                             K.cast(df_labels_train['h21'], dtype='float64')],
-                          batch_size=32,
-                          epochs=300,
-                          verbose=0
-                         )
-    matrix_functional = load_model(path.join(MOD_PATH, 'cnn_functional.h5'))
+    # print('    Fitting the Functional Conv2D Keras models...')
+    # matrix_functional.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1),
+    #                                 dtype='float64'),
+    #                          K.cast(df_eng_h21_train[:,1:13].reshape(-1,12,1),
+    #                                 dtype='float64'),
+    #                          K.cast(df_eng_h21_train[:,13:28].reshape(-1,15,1),
+    #                                 dtype='float64'),
+    #                          K.cast(df_matrix_train.reshape(-1,12,15,1),
+    #                                 dtype='float64')],
+    #                       y=[K.cast(df_labels_train['h11'], dtype='float64'),
+    #                          K.cast(df_labels_train['h21'], dtype='float64')],
+    #                       batch_size=32,
+    #                       epochs=300,
+    #                       verbose=0
+    #                      )
 
-    print('    Fitting the Functional Conv1D Keras models...')
-    matrix_functional_pca.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1),
-                                        dtype='float64'),
-                                 K.cast(df_eng_h21_train[:,1:13].reshape(-1,12,1),
-                                        dtype='float64'),
-                                 K.cast(df_eng_h21_train[:,13:28].reshape(-1,15,1),
-                                        dtype='float64'),
-                                 K.cast(df_eng_h21_train[:,28:].reshape(-1,81,1),
-                                        dtype='float64')],
-                              y=[K.cast(df_labels_train['h11'], dtype='float64'),
-                                 K.cast(df_labels_train['h21'], dtype='float64')],
-                              batch_size=32,
-                              epochs=300,
-                              verbose=0
-                             )
-    matrix_functional_pca = load_model(path.join(MOD_PATH, 'cnn_functional_pca.h5'))
+    # print('    Fitting the Functional Conv1D Keras models...')
+    # matrix_functional_pca.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1),
+    #                                     dtype='float64'),
+    #                              K.cast(df_eng_h21_train[:,1:13].reshape(-1,12,1),
+    #                                     dtype='float64'),
+    #                              K.cast(df_eng_h21_train[:,13:28].reshape(-1,15,1),
+    #                                     dtype='float64'),
+    #                              K.cast(df_eng_h21_train[:,28:].reshape(-1,81,1),
+    #                                     dtype='float64')],
+    #                           y=[K.cast(df_labels_train['h11'], dtype='float64'),
+    #                              K.cast(df_labels_train['h21'], dtype='float64')],
+    #                           batch_size=32,
+    #                           epochs=300,
+    #                           verbose=0
+    #                          )
 
-    print('    Fitting the Functional Dense Keras models...')
-    matrix_functional_pca_dense.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1), 
-                                              dtype='float64'),
-                                       K.cast(df_eng_h21_train[:,1:13],
-                                              dtype='float64'),
-                                       K.cast(df_eng_h21_train[:,13:28],
-                                              dtype='float64'),
-                                       K.cast(df_eng_h21_train[:,28:],
-                                              dtype='float64')],
-                                    y=[K.cast(df_labels_train['h11'],
-                                              dtype='float64'),
-                                       K.cast(df_labels_train['h21'],
-                                              dtype='float64')],
-                                    batch_size=32,
-                                    epochs=300,
-                                    verbose=0
-                                   )
-    matrix_functional_pca_dense = load_model(path.join(MOD_PATH,
-                                                'cnn_functional_pca_dense.h5'))
+    # print('    Fitting the Functional Dense Keras models...')
+    # matrix_functional_pca_dense.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1), 
+    #                                           dtype='float64'),
+    #                                    K.cast(df_eng_h21_train[:,1:13],
+    #                                           dtype='float64'),
+    #                                    K.cast(df_eng_h21_train[:,13:28],
+    #                                           dtype='float64'),
+    #                                    K.cast(df_eng_h21_train[:,28:],
+    #                                           dtype='float64')],
+    #                                 y=[K.cast(df_labels_train['h11'],
+    #                                           dtype='float64'),
+    #                                    K.cast(df_labels_train['h21'],
+    #                                           dtype='float64')],
+    #                                 batch_size=32,
+    #                                 epochs=300,
+    #                                 verbose=0
+    #                                )
 
-    print('End of the training procedure!')
+    # print('End of the training procedure!')
 
 
     # Use the trained models to build the second level predictions:

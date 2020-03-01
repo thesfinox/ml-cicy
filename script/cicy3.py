@@ -141,17 +141,17 @@ def main():
     # ridge.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
     # linear_svr.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
     # svr_rbf.compute(DB_NAME, n_iter=50, rounding=np.rint, seed=RAND)
-    xgb.compute(DB_NAME, n_iter=20, rounding=np.floor, seed=RAND)
-    xgbrf.compute(DB_NAME, n_iter=20, rounding=np.floor, seed=RAND)
-    # rnd_for.compute(DB_NAME, n_iter=12, rounding=np.floor, seed=RAND)
-    # grd_boost.compute(DB_NAME, n_iter=12, rounding=np.floor, seed=RAND)
-    sequential_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
-    functional_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
-    functional_matrix_pca.compute(DB_NAME, rounding=np.rint, seed=RAND)
-    functional_matrix_pca_dense.compute(DB_NAME, rounding=np.rint, seed=RAND)
+    # xgb.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
+    # xgbrf.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
+    # # rnd_for.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
+    # # grd_boost.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
+    # sequential_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
+    # functional_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
+    # functional_matrix_pca.compute(DB_NAME, rounding=np.rint, seed=RAND)
+    # functional_matrix_pca_dense.compute(DB_NAME, rounding=np.rint, seed=RAND)
 
     # Stack the algorithms
-    stacking.compute(DB_NAME, n_iter=30, seed=RAND)
+    stacking.compute(DB_NAME, n_iter=50, seed=RAND)
 
 if __name__ == '__main__':
     main()

@@ -207,11 +207,11 @@ def compute(df_name, rounding=np.floor, seed=42):
                                   dim_cp_dense_layers=([],[15,30,30,15]),
                                   dim_h0_amb_dense_layers=([],[20,20,10]),
                                   matrix_dense_layers=([200, 200, 100],
-                                                       [300, 200, 200, 100, 100]),
+                                                       [300, 300, 200, 200, 100]),
                                   activation='relu',
                                   dropout=[0.5,0.4],
                                   batch_normalization=True,
-                                  dense=[1],
+                                  dense=[10],
                                   out_activation=True,
                                   l1_regularization=(0.0,0.0),
                                   l2_regularization=(0.0,0.0)

@@ -116,7 +116,7 @@ def compute(df_name, rounding=np.floor, seed=42):
     euler_labels_nn_val   = K.cast(euler_labels_nn_val, dtype='float64')
 
     # Compile and fit the model for h_11:
-    cnn_h11_params = {'conv2d_layers':       [ 200, 100, 100 ],
+    cnn_h11_params = {'conv2d_layers':       [ 200, 200, 100 ],
                       'activation':          'relu',
                       'kernel_size':         3,
                       'max_pool':            False,
@@ -245,13 +245,13 @@ def compute(df_name, rounding=np.floor, seed=42):
     
     # Compile and fit the model for h_21:
 
-    cnn_h21_params = {'conv2d_layers':       [ 300, 200, 100, 100 ],
+    cnn_h21_params = {'conv2d_layers':       [ 300, 300, 200, 200, 100 ],
                       'activation':          'relu',
                       'kernel_size':         3,
                       'max_pool':            False,
                       'dropout':             0.4,
                       'batch_normalization': True,
-                      'dense':               15,
+                      'dense':               10,
                       'out_activation':      True,
                       'l1_regularization':   0.0,
                       'l2_regularization':   0.0
@@ -368,6 +368,6 @@ def compute(df_name, rounding=np.floor, seed=42):
                xlabel='Difference from real value',
                legend='$h_{21}$')
 
-    save_fig('cnn_matrix_sequential_h11_error_eng')
+    save_fig('cnn_matrix_sequential_h21_error_eng')
     # plt.show()
     plt.close(fig)

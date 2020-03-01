@@ -219,7 +219,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
     for n in range(len(dim_h0_amb_conv1d_layers[1])):
         dim_h0_layer_h21 = Conv1D(dim_h0_amb_conv1d_layers[1][n],
                                   kernel_size=kernel_size,
-                                  kernel_regularizer=reg,
+                                  kernel_regularizer=reg_h21,
                                   padding='same')(dim_h0_layer_h21)
         if activation == 'relu':
             dim_h0_layer_h21 = Activation('relu')(dim_h0_layer_h21)

@@ -1,4 +1,4 @@
-For the first analysis, we considered the original dataset located at \url{http://www.lpthe.jussieu.fr/~erbin/files/data/}: the file was last downloaded on February, 24th 2020 and never directly modified. Before moving to the application of machine learning algorithms and neural networks, we first visualised and analysed the available data in order to extract usable features and gain some insights to be used in the following analysis.
+For the first analysis, we considered the original dataset located at \url{http://www.lpthe.jussieu.fr/~erbin/files/data/cicy3o_data.tar.gz}: the file was last downloaded on February, 24th 2020 and never directly modified. Before moving to the application of machine learning algorithms and neural networks, we first visualised and analysed the available data in order to extract usable features and gain some insights to be used in the following analysis.
 
 In what follows we use \textit{Scikit-learn} (v.\ 0.22.1), \textit{XGBoost} (v.\ 0.90) and \textit{Keras} (v.\ 2.3.1, with \textit{Tensorflow} v.\ 2.0.0 backend) as reference libraries in a \textit{Conda} installation on \textit{Arch Linux}. Hardware specifications are as follow:
 \begin{itemize}
@@ -72,7 +72,7 @@ In what follows we use \textit{Scikit-learn} (v.\ 0.22.1), \textit{XGBoost} (v.\
         \label{fig:clustering_importances}
     \end{figure}
     
-    In Figure~\ref{fig:clustering_importances} we show the ranking of the clustering algorithm which shows that \texttt{KMeans} does not play a role in the prediction of $h_{11}$ while it is only marginally relevant for $h_{21}$. The number of clusters needed is however unrelated to any other feature and varies a lot in relation to the random seed initially set (42 in the case reported here).
+    In Figure~\ref{fig:clustering_importances} we show the ranking of the clustering algorithm which shows that \texttt{KMeans} does not play a role in the prediction of $h_{11}$ while it is only marginally relevant for $h_{21}$. Moreover the number of clusters needed is unrelated to any other feature and varies a lot in relation to the random seed initially set (42 in the case reported here).
     
     \begin{figure}[!t]
         \centering

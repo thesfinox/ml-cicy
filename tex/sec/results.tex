@@ -107,3 +107,39 @@ We can now analyse separately the results for $h_{11}$ and $h_{21}$ for each con
         \caption{Error distribution for \texttt{SVR} with \textit{rbf} kernel using the engineered dataset.}
         \label{fig:svr_rbf_err}
     \end{figure}
+    
+\subsection{Boosted Trees}
+    We then consider the \texttt{XGBoost} algorithm (gradient boosted trees). We implement a search space for the \texttt{BayesSearchCV} for the hyperparameters \texttt{colsample\_bynode}, \texttt{learning\_rate}, \texttt{max\_depth}, \texttt{n\_estimators}, \texttt{reg\_alpha}, \texttt{reg\_lambda}, \texttt{subsample} of the \textit{Scikit-learn} API for compatibility with other tools in the analysis and we use the \textit{floor} function for the accuracy.
+    
+    The naive computation with only the matrix components for $h_{11}$ reached $52.2\% \pm 1.3\%$ of accuracy during cross-validation and $50.3\%$ of accuracy for the test predictions using \texttt{colsample\_bynode = 0.9}, \texttt{learning\_rate = 0.13}, \texttt{max\_depth = 2}, \texttt{n\_estimators = 500}, \texttt{reg\_alpha = 0.01}, \texttt{reg\_lambda = 100.0}, \texttt{subsample = 0.67}. The same computation for $h_{21}$ led to $18.2\% \pm 1.6\%$ during cross-validation and $18.6\%$ of accuracy in the test set using \texttt{colsample\_bynode = 0.90}, \texttt{learning\_rate = 0.19}, \texttt{max\_depth = 13}, \texttt{n\_estimators = 252}, \texttt{reg\_alpha = 4.06}, \texttt{reg\_lambda = 25.6}, \texttt{subsample = 0.96}.
+    
+    The baseline computation with \texttt{num\_cp} only for $h_{11}$ reached $61.6\% \pm 1.7\%$ of accuracy during cross-validation and $62.9\%$ of accuracy during the test predictions using \texttt{colsample\_bynode = 0.28}, \texttt{learning\_rate = 0.10}, \texttt{max\_depth = 18}, \texttt{n\_estimators = 263}, \texttt{reg\_alpha = 15.3}, \texttt{reg\_lambda = 0.10}, \texttt{subsample = 0.77}. For $h_{21}$ we find $10.3\% \pm 1.1\%$ of accuracy in cross-validation and $10.7\%$ for the test set using \texttt{colsample\_bynode = 0.60}, \texttt{learning\_rate = 0.05}, \texttt{max\_depth = 20}, \texttt{n\_estimators = 100}, \texttt{reg\_alpha = 0.01}, \texttt{reg\_lambda = 0.01}, \texttt{subsample = 0.82}.
+    
+    The second baseline computation using only \texttt{dim\_cp} does not show improvement for $h_{11}$ with $57.7\% \pm 1.2\%$ in cross-validation and $57.5\%$ of accuracy for the test predictions with \texttt{colsample\_bynode = 0.28}, \texttt{learning\_rate = 0.02}, \texttt{max\_depth = 14}, \texttt{n\_estimators = 244}, \texttt{reg\_alpha = 10.3}, \texttt{reg\_lambda = 0.04}, \texttt{subsample = 0.99}, while the results for $h_{21}$ are $11.9\% \pm 1.3\%$ of accuracy in cross-validation and $13.7\%$ for the test set using \texttt{colsample\_bynode = 0.39}, \texttt{learning\_rate = 0.57}, \texttt{max\_depth = 3}, \texttt{n\_estimators = 342}, \texttt{reg\_alpha = 11.7}, \texttt{reg\_lambda = 0.11}, \texttt{subsample = 0.77}.
+    
+    The complete computation using the engineered features improves both $h_{11}$ and $h_{21}$. Specifically we get $59\% \pm 2\%$ of accuracy in cross-validation for $h_{11}$ and $60\%$ during the test predictions using \texttt{colsample\_bynode = 0.9}, \texttt{learning\_rate = 0.03}, \texttt{max\_depth = 2}, \texttt{n\_estimators = 100}, \texttt{reg\_alpha = 100.0}, \texttt{reg\_lambda = 8.6}, \texttt{subsample = 1.0}, while the accuracy for $h_{21}$ is $23\% \pm 2\%$ of accuracy during cross-validation and $22\%$ during the test predictions using \texttt{colsample\_bynode = 0.9}, \texttt{learning\_rate = 0.07}, \texttt{max\_depth = 1}, \texttt{n\_estimators = 500}, \texttt{reg\_alpha = 0.05}, \texttt{reg\_lambda = 0.01}, \texttt{subsample = 0.6}. We show in Figure~\ref{fig:xgb_err} the distribution of the the errors of the test predictions.
+    
+    \begin{figure}[t]
+        \centering
+        \includegraphics[width=0.75\textwidth]{tex/img/xgb_error_eng.png}
+        \caption{Error distribution for \texttt{XGBoost} (Boosted Tree) using the engineered dataset.}
+        \label{fig:xgb_err}
+    \end{figure}
+    
+\subsection{Random Forest}
+    We then consider the \texttt{XGBoost} algorithm to compute the random forest. We implement a search space for the \texttt{BayesSearchCV} for the hyperparameters \texttt{colsample\_bynode}, \texttt{max\_depth}, \texttt{num\_parallel\_tree}, \texttt{reg\_alpha}, \texttt{reg\_lambda}, \texttt{subsample} of the \textit{Scikit-learn} API for compatibility with other tools in the analysis and we use the \textit{floor} function for the accuracy.
+    
+    The naive computation with only the matrix components for $h_{11}$ reached $61.7\% \pm 1.3\%$ of accuracy during cross-validation and $62.3\%$ of accuracy for the test predictions using \texttt{colsample\_bynode = 0.46}, \texttt{max\_depth = 19}, \texttt{num\_parallel\_tree = 10}, \texttt{reg\_alpha = 0.54}, \texttt{reg\_lambda = 0.06}, \texttt{subsample = 0.78}. The same computation for $h_{21}$ led to $14.2\% \pm 0.8\%$ during cross-validation and $15.1\%$ of accuracy in the test set using \texttt{colsample\_bynode = 0.90}, \texttt{max\_depth = 20}, \texttt{num\_parallel\_tree = 2}, \texttt{reg\_alpha = 0.01}, \texttt{reg\_lambda = 0.01}, \texttt{subsample = 1.0}.
+    
+    The baseline computation with \texttt{num\_cp} only for $h_{11}$ reached $61.4\% \pm 1.7\%$ of accuracy during cross-validation and $62.5\%$ of accuracy during the test predictions using \texttt{colsample\_bynode = 0.84}, \texttt{max\_depth = 14}, \texttt{num\_parallel\_tree = 22}, \texttt{reg\_alpha = 0.04}, \texttt{reg\_lambda = 0.50}, \texttt{subsample = 1.0}. For $h_{21}$ we find $10.5\% \pm 1.2\%$ of accuracy in cross-validation and $9.0\%$ for the test set using \texttt{colsample\_bynode = 0.9}, \texttt{max\_depth = 2}, \texttt{num\_parallel\_tree = 75}, \texttt{reg\_alpha = 0.01}, \texttt{reg\_lambda = 0.01}, \texttt{subsample = 0.6}.
+    
+    The second baseline computation using only \texttt{dim\_cp} leads to $h_{11}$ with $59\% \pm 2\%$ in cross-validation and $61\%$ of accuracy for the test predictions with \texttt{colsample\_bynode = 0.77}, \texttt{max\_depth = 15}, \texttt{num\_parallel\_tree = 19}, \texttt{reg\_alpha = 16.9}, \texttt{reg\_lambda = 0.17}, \texttt{subsample = 0.99}, while the results for $h_{21}$ are $11.8\% \pm 0.7\%$ of accuracy in cross-validation and $13.2\%$ for the test set using \texttt{colsample\_bynode = 0.72}, \texttt{max\_depth = 11}, \texttt{num\_parallel\_tree = 2}, \texttt{reg\_alpha = 0.01}, \texttt{reg\_lambda = 0.01}, \texttt{subsample = 0.6}.
+    
+    The complete computation using the engineered features improves both $h_{11}$ and $h_{21}$. Specifically we get $64\% \pm 2\%$ of accuracy in cross-validation for $h_{11}$ and $65\%$ during the test predictions using \texttt{colsample\_bynode = 0.18}, \texttt{max\_depth = 17}, \texttt{num\_parallel\_tree = 12}, \texttt{reg\_alpha = 0.09}, \texttt{reg\_lambda = 0.09}, \texttt{subsample = 0.8}, while the accuracy for $h_{21}$ is $20.0\% \pm 1.5\%$ of accuracy during cross-validation and $17.0\%$ during the test predictions using \texttt{colsample\_bynode = 0.9}, \texttt{max\_depth = 20}, \texttt{num\_parallel\_tree = 2}, \texttt{reg\_alpha = 0.01}, \texttt{reg\_lambda = 0.01}, \texttt{subsample = 0.6}. We show in Figure~\ref{fig:xgbrf_err} the distribution of the the errors of the test predictions.
+    
+    \begin{figure}[t]
+        \centering
+        \includegraphics[width=0.75\textwidth]{tex/img/xgbrf_error_eng.png}
+        \caption{Error distribution for \texttt{XGBoost} (Random Forest) using the engineered dataset.}
+        \label{fig:xgbrf_err}
+    \end{figure}

@@ -1,6 +1,6 @@
-For the first analysis, we considered the original dataset located at \url{http://www.lpthe.jussieu.fr/~erbin/files/data/}: the file was last downloaded on February, 24th 2020 and never directly modified. Before moving to the application of machine learning algorithms and neural networks, we first visualised and analysed the available data in order to extract usable features and gain some insights to be used in the following analysis.
+For the first analysis, we considered the original dataset located at \url{http://www.lpthe.jussieu.fr/~erbin/files/data/cicy3o_data.tar.gz}: the file was last downloaded on February, 24th 2020 and never directly modified. Before moving to the application of machine learning algorithms and neural networks, we first visualised and analysed the available data in order to extract usable features and gain some insights to be used in the following analysis.
 
-In what follows we use \textit{Scikit-learn} (v.\ 0.22.1), \textit{XGBoost} (v.\ 0.90) and \textit{Keras} (v.\ 2.3.1, with \textit{Tensorflow} v.\ 2.0.0 backend) as reference libraries in a \textit{Conda} installation on \textit{Arch Linux} (kernel v.\ 5.5.6). Hardware specifications are as follow:
+In what follows we use \textit{Scikit-learn} (v.\ 0.22.1), \textit{XGBoost} (v.\ 0.90) and \textit{Keras} (v.\ 2.3.1, with \textit{Tensorflow} v.\ 2.0.0 backend) as reference libraries in a \textit{Conda} installation on \textit{Arch Linux}. Hardware specifications are as follow:
 \begin{itemize}
     \item CPU: Intel Core i7-7700HQ @ 2.80 GHz,
     \item GPU: NVIDIA GeForce 940 MX (2 GB RAM),
@@ -9,7 +9,7 @@ In what follows we use \textit{Scikit-learn} (v.\ 0.22.1), \textit{XGBoost} (v.\
 
 \subsection{Data Visualisation}
 
-    After loading the dataset, as a first approach, we considered the distribution in the number of occurrences of $h_{11}$ and $h_{21}$. Specifically we considered only manifolds which cannot be represented as products of spaces and we removed some outliers: we considered therefore only entries whose column \texttt{isprod} is identically $0$ and we kept the Hodge numbers in the range $h_{11} \in \left[ 1, 16 \right]$ and $h_{21} \in \left[1, 86 \right]$. We show in Figure~\ref{fig:distribution_occurrences} the distribution of occurrences thus derived. We will then consider the dataset without outliers and product spaces in the following analysis.
+    After loading the dataset, as a first approach, we considered the distribution in the number of occurrences of $h_{11}$ and $h_{21}$. We considered only manifolds which cannot be represented as products of spaces and we removed some outliers: we considered therefore only entries whose column \texttt{isprod} is identically $0$ and we kept the Hodge numbers in the range $h_{11} \in \left[ 1, 16 \right]$ and $h_{21} \in \left[1, 86 \right]$. We show in Figure~\ref{fig:distribution_occurrences} the distribution of occurrences thus derived. We will then consider the dataset without outliers and product spaces in the following analysis.
     
     \begin{figure}[!t]
         \centering
@@ -20,7 +20,7 @@ In what follows we use \textit{Scikit-learn} (v.\ 0.22.1), \textit{XGBoost} (v.\
     
     As a reference, we also plot the distribution of $h_{11}$ and $h_{21}$ with respect to some of the features. Specifically we used \texttt{num\_cp}, \texttt{num\_eqs}, \texttt{norm\_matrix} and \texttt{rank\_matrix} as a reference: relations shown Figure~\ref{fig:scatter_plot_distributions} are not always linear but the distributions of $h_{11}$ and $h_{21}$ show however a tendency to correlation more than sparsity.
     
-    \begin{figure}[!b]
+    \begin{figure}[!t]
         \centering
         \includegraphics[width=\textwidth]{tex/img/correlation_matrix.png}
         \caption{Correlation matrix of the (scalar) features.}
@@ -29,7 +29,7 @@ In what follows we use \textit{Scikit-learn} (v.\ 0.22.1), \textit{XGBoost} (v.\
     
     This can also be inferred from the correlation matrix in Figure~\ref{fig:correlation_matrix} which shows the relations between the labels \texttt{h11}, \texttt{h21} and \texttt{euler} (the latter will not be considered in the analysis) and with respect to other scalar features.
     
-    \begin{figure}[!t]
+    \begin{figure}[p]
         \centering
         \includegraphics[height=0.9\textheight,
                          trim={0 0 6in 0},
@@ -50,7 +50,7 @@ In what follows we use \textit{Scikit-learn} (v.\ 0.22.1), \textit{XGBoost} (v.\
         \label{fig:pca_analysis}
     \end{figure}
     
-    We then moved to the Principal Components Analysis of the components of the configuration matrix using the algorithm \texttt{PCA} (\texttt{random\_state} = 42). We first considered the case of only 2 principal components to be used in plots but not in the real analysis. We show in Figure~\ref{fig:pca_analysis} the distribution of $h_{11}$ and $h_{21}$ with respect to such components. For the analysis we focused on keeping the 99\% of the total variance which, from a $12 \times 15$ (180 entries) matrix led to a vector of 81 components.
+    We then moved to the Principal Components Analysis (unsupervised) of the components of the configuration matrix using the algorithm \texttt{PCA} (\texttt{random\_state} = 42). We first considered the case of only 2 principal components to be used in plots but not in the real analysis. We show in Figure~\ref{fig:pca_analysis} the distribution of $h_{11}$ and $h_{21}$ with respect to such components. For the analysis we focused on keeping the 99\% of the total variance which, from a $12 \times 15$ (180 entries) matrix, led to a vector of 81 components.
     
 \subsection{Feature Importances}
 
@@ -68,11 +68,11 @@ In what follows we use \textit{Scikit-learn} (v.\ 0.22.1), \textit{XGBoost} (v.\
                          trim={6in 5in 0 0},
                          clip
                         ]{tex/img/feature_importances.png}
-        \caption{Clustering importances}
+        \caption{Clustering ranking.}
         \label{fig:clustering_importances}
     \end{figure}
     
-    In Figure~\ref{fig:clustering_importances} we show the ranking of the clustering algorithm which shows that \texttt{KMeans} does not play a role in the prediction of $h_{11}$ while it is only marginally relevant for $h_{21}$. The number of clusters needed is however unrelated to any other feature and varies a lot in relation to the random seed initially set (42 in the case reported here).
+    In Figure~\ref{fig:clustering_importances} we show the ranking of the clustering algorithm which shows that \texttt{KMeans} does not play a role in the prediction of $h_{11}$ while it is only marginally relevant for $h_{21}$. Moreover the number of clusters needed is unrelated to any other feature and varies a lot in relation to the random seed initially set (42 in the case reported here).
     
     \begin{figure}[!t]
         \centering
@@ -80,24 +80,24 @@ In what follows we use \textit{Scikit-learn} (v.\ 0.22.1), \textit{XGBoost} (v.\
                          trim={0 5in 6in 0},
                          clip
                         ]{tex/img/feature_importances.png}
-        \caption{Scalar importance}
+        \caption{Scalar ranking.}
         \label{fig:scalar_importances}
     \end{figure}
     
     \begin{figure}[!t]
         \centering
         \includegraphics[width=\textwidth,
-                         trim={0 0 0 6in},
+                         trim={0 0 0 5in},
                          clip
                         ]{tex/img/feature_importances.png}
-        \caption{Scalar importance}
+        \caption{Vector and tensor ranking.}
         \label{fig:vector_tensor_importances}
     \end{figure}
     
     \begin{figure}[!t]
         \centering
         \includegraphics[width=\textwidth]{tex/img/feature_importances_vector_tensor_sum.png}
-        \caption{Sum of vector and tensor importance}
+        \caption{Sum of vector and tensor ranking.}
         \label{fig:vector_tensor_sum_importances}
     \end{figure}
     

@@ -22,3 +22,10 @@ script/*.tar.gz
 script/*.pdf
 script/*.xz
 script/*.txt
+
+# Do not upload pdf files in the tex directory
+
+tex/*.pdf
+tex/*.aux
+tex/*.gz
+tex/*.toc

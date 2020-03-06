@@ -108,9 +108,10 @@ def build_conv_model(num_cp_dense_layers=(None,None),
                      dim_h0_amb_conv1d_layers=(None,None),
                      matrix_conv2d_layers=(None,None),
                      activation='relu',
-                     kernel_size=3,
-                     max_pool=[2,2],
-                     dropout=[0.4,0.2],
+                     kernel_size=(3,3),
+                     matrix_kernel_size=(5,5),
+                     max_pool=(2,2),
+                     dropout=(0.4,0.2),
                      batch_normalization=True,
                      dense=[10],
                      out_activation=True,
@@ -160,7 +161,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
     
     for n in range(len(dim_cp_conv1d_layers[0])):
         dim_cp_layer_h11 = Conv1D(dim_cp_conv1d_layers[0][n],
-                                  kernel_size=kernel_size,
+                                  kernel_size=kernel_size[0],
                                   padding='same')(dim_cp_layer_h11)
         if activation == 'relu':
             dim_cp_layer_h11 = Activation('relu')(dim_cp_layer_h11)
@@ -176,7 +177,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
         
     for n in range(len(dim_cp_conv1d_layers[1])):
         dim_cp_layer_h21 = Conv1D(dim_cp_conv1d_layers[1][n],
-                                  kernel_size=kernel_size,
+                                  kernel_size=kernel_size[1],
                                   kernel_regularizer=reg_h21,
                                   padding='same')(dim_cp_layer_h21)
         if activation == 'relu':
@@ -201,7 +202,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
     
     for n in range(len(dim_h0_amb_conv1d_layers[0])):
         dim_h0_layer_h11 = Conv1D(dim_h0_amb_conv1d_layers[0][n],
-                                  kernel_size=kernel_size,
+                                  kernel_size=kernel_size[0],
                                   kernel_regularizer=reg_h11,
                                   padding='same')(dim_h0_layer_h11)
         if activation == 'relu':
@@ -218,7 +219,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
         
     for n in range(len(dim_h0_amb_conv1d_layers[1])):
         dim_h0_layer_h21 = Conv1D(dim_h0_amb_conv1d_layers[1][n],
-                                  kernel_size=kernel_size,
+                                  kernel_size=kernel_size[1],
                                   kernel_regularizer=reg_h21,
                                   padding='same')(dim_h0_layer_h21)
         if activation == 'relu':
@@ -243,7 +244,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
     
     for n in range(len(matrix_conv2d_layers[0])):
         matrix_layer_h11 = Conv2D(matrix_conv2d_layers[0][n],
-                                  kernel_size=kernel_size,
+                                  kernel_size=matrix_kernel_size[0],
                                   kernel_regularizer=reg_h11,
                                   padding='same')(matrix_layer_h11)
         if activation == 'relu':
@@ -260,7 +261,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
         
     for n in range(len(matrix_conv2d_layers[1])):
         matrix_layer_h21 = Conv2D(matrix_conv2d_layers[1][n],
-                                  kernel_size=kernel_size,
+                                  kernel_size=matrix_kernel_size[1],
                                   kernel_regularizer=reg_h21,
                                   padding='same')(matrix_layer_h21)
         if activation == 'relu':
@@ -280,12 +281,15 @@ def build_conv_model(num_cp_dense_layers=(None,None),
             
     # outputs
     
-    h11 = concatenate([num_cp_layer_h11, dim_cp_layer_h11, matrix_layer_h11])
+    h11 = concatenate([num_cp_layer_h11,
+                       dim_cp_layer_h11,
+                       matrix_layer_h11])
     h11 = Dense(1, name='h_11')(h11)
     
-    intermediate = Lambda(lambda x: -x)(h11) # return correlation instead of anti-correlation
+    intermediate = Lambda(lambda x: x)(h11) # return correlation instead of anti-correlation
     intermediate = concatenate([intermediate,
-                                dim_cp_layer_h21]) # insert again
+                                dim_cp_layer_h21,
+                                dim_h0_layer_h21])
     if len(dense) > 0:
         for n in range(len(dense)):
             intermediate = Dense(dense[n])(intermediate)
@@ -315,11 +319,12 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
                        dim_h0_amb_conv1d_layers=(None,None),
                        matrix_conv1d_layers=(None,None),
                        activation='relu',
-                       kernel_size=3,
-                       max_pool=[2,2],
-                       dropout=[0.4,0.2],
+                       kernel_size=(3,3),
+                       pca_kernel_size=(5,5),
+                       max_pool=(2,2),
+                       dropout=(0.4,0.2),
                        batch_normalization=True,
-                       dense=[10],
+                       dense=[1],
                        out_activation=True,
                        l1_regularization=(0.0,0.0),
                        l2_regularization=(0.0,0.0)
@@ -367,7 +372,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     
     for n in range(len(dim_cp_conv1d_layers[0])):
         dim_cp_layer_h11 = Conv1D(dim_cp_conv1d_layers[0][n],
-                                  kernel_size=kernel_size,
+                                  kernel_size=kernel_size[0],
                                   kernel_regularizer=reg_h11,
                                   padding='same')(dim_cp_layer_h11)
         if activation == 'relu':
@@ -384,7 +389,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
         
     for n in range(len(dim_cp_conv1d_layers[1])):
         dim_cp_layer_h21 = Conv1D(dim_cp_conv1d_layers[1][n],
-                                  kernel_size=kernel_size,
+                                  kernel_size=kernel_size[1],
                                   kernel_regularizer=reg_h21,
                                   padding='same')(dim_cp_layer_h21)
         if activation == 'relu':
@@ -409,7 +414,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     
     for n in range(len(dim_h0_amb_conv1d_layers[0])):
         dim_h0_layer_h11 = Conv1D(dim_h0_amb_conv1d_layers[0][n],
-                                  kernel_size=kernel_size,
+                                  kernel_size=kernel_size[0],
                                   kernel_regularizer=reg_h11,
                                   padding='same')(dim_h0_layer_h11)
         if activation == 'relu':
@@ -426,7 +431,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
         
     for n in range(len(dim_h0_amb_conv1d_layers[1])):
         dim_h0_layer_h21 = Conv1D(dim_h0_amb_conv1d_layers[1][n],
-                                  kernel_size=kernel_size,
+                                  kernel_size=kernel_size[1],
                                   kernel_regularizer=reg_h21,
                                   padding='same')(dim_h0_layer_h21)
         if activation == 'relu':
@@ -451,7 +456,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     
     for n in range(len(matrix_conv1d_layers[0])):
         matrix_layer_h11 = Conv1D(matrix_conv1d_layers[0][n],
-                                  kernel_size=kernel_size,
+                                  kernel_size=pca_kernel_size[0],
                                   kernel_regularizer=reg_h11,
                                   padding='same')(matrix_layer_h11)
         if activation == 'relu':
@@ -468,7 +473,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
         
     for n in range(len(matrix_conv1d_layers[1])):
         matrix_layer_h21 = Conv1D(matrix_conv1d_layers[1][n],
-                                  kernel_size=kernel_size,
+                                  kernel_size=pca_kernel_size[1],
                                   kernel_regularizer=reg_h21,
                                   padding='same')(matrix_layer_h21)
         if activation == 'relu':
@@ -491,8 +496,10 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     h11 = concatenate([num_cp_layer_h11, dim_cp_layer_h11, matrix_layer_h11])
     h11 = Dense(1, name='h_11')(h11)
     
-    intermediate = Lambda(lambda x: -x)(h11) # return correlation instead of anti-correlation
-    intermediate = concatenate([intermediate, dim_cp_layer_h21])
+    intermediate = Lambda(lambda x: x)(h11) # return correlation instead of anti-correlation
+    intermediate = concatenate([intermediate,
+                                dim_cp_layer_h21,
+                                dim_h0_layer_h21])
     if len(dense) > 0:
         for n in range(len(dense)):
             intermediate = Dense(dense[n])(intermediate)
@@ -522,9 +529,9 @@ def build_dense_model(num_cp_dense_layers=(None,None),
                       dim_h0_amb_dense_layers=(None,None),
                       matrix_dense_layers=(None,None),
                       activation='relu',
-                      dropout=[0.4,0.2],
+                      dropout=(0.4,0.2),
                       batch_normalization=True,
-                      dense=[10],
+                      dense=[1],
                       out_activation=True,
                       l1_regularization=(0.0,0.0),
                       l2_regularization=(0.0,0.0)
@@ -661,10 +668,14 @@ def build_dense_model(num_cp_dense_layers=(None,None),
     # outputs
     
     h11 = concatenate([num_cp_layer_h11, dim_cp_layer_h11, matrix_layer_h11])
+    h11 = Dense(1)(h11)
+    h11 = concatenate([h11, num_cp_layer_h11])
     h11 = Dense(1, name='h_11')(h11)
     
-    intermediate = Lambda(lambda x: -x)(h11) # return correlation instead of anti-correlation
-    intermediate = concatenate([intermediate, dim_cp_layer_h21])
+    intermediate = Lambda(lambda x: x)(h11) # return correlation instead of anti-correlation
+    intermediate = concatenate([intermediate,
+                                dim_cp_layer_h21,
+                                dim_h0_layer_h21])
     if len(dense) > 0:
         for n in range(len(dense)):
             intermediate = Dense(dense[n])(intermediate)

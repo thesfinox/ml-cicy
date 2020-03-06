@@ -18,7 +18,8 @@ assert tf.__version__ >= '2.0.0'  # newest version
 
 from os                          import path
 from joblib                      import load, dump
-# from sklearn.preprocessing       import StandardScaler
+from sklearn.pipeline            import Pipeline
+from sklearn.preprocessing       import MinMaxScaler, StandardScaler
 from sklearn.model_selection     import train_test_split
 from tensorflow.keras            import backend as K
 from tensorflow.keras.optimizers import Adam
@@ -80,11 +81,12 @@ def compute(df_name, rounding=np.floor, seed=42):
                                                              shuffle=True
                                                             )
 
-    # Apply StandardScaler to the input
-    # std_scal = StandardScaler()
+    # # Apply scaler to the input
+    # scal = Pipeline([('normalization', MinMaxScaler()),
+    #                  ('standardization', StandardScaler())])
 
-    # df_matrix_train  = std_scal.fit_transform(df_matrix_train)
-    # df_matrix_test   = std_scal.transform(df_matrix_test)
+    # df_matrix_train = scal.fit_transform(df_matrix_train)
+    # df_matrix_test  = scal.transform(df_matrix_test)
 
     # Reshape the matrix
     df_matrix_nn_train = df_matrix_train.reshape(-1,12,15,1)
@@ -116,15 +118,15 @@ def compute(df_name, rounding=np.floor, seed=42):
     euler_labels_nn_val   = K.cast(euler_labels_nn_val, dtype='float64')
 
     # Compile and fit the model for h_11:
-    cnn_h11_params = {'conv2d_layers':       [ 200, 200, 100 ],
+    cnn_h11_params = {'conv2d_layers':       [ 80, 40, 20 ],
                       'activation':          'relu',
-                      'kernel_size':         3,
+                      'kernel_size':         5,
                       'max_pool':            False,
-                      'dropout':             0.5,
+                      'dropout':             0.2,
                       'batch_normalization': True,
-                      'dense':               10,
+                      'dense':               20,
                       'out_activation':      True,
-                      'l1_regularization':   0.0,
+                      'l1_regularization':   1e-5,
                       'l2_regularization':   0.0
                      }
 
@@ -166,7 +168,7 @@ def compute(df_name, rounding=np.floor, seed=42):
     # Fit the model
     model_h11_history = model_h11_cnn.fit(x=df_matrix_nn_train,
                                           y=h11_labels_nn_train,
-                                          batch_size=32,
+                                          batch_size=16,
                                           epochs=1000,
                                           verbose=0,
                                           callbacks=callbacks_h11,
@@ -242,16 +244,15 @@ def compute(df_name, rounding=np.floor, seed=42):
     save_fig('cnn_matrix_sequential_h11_error_eng')
     # plt.show()
     plt.close(fig)
-    
-    # Compile and fit the model for h_21:
 
-    cnn_h21_params = {'conv2d_layers':       [ 300, 300, 200, 200, 100 ],
+    # Compile and fit the model for h_21:
+    cnn_h21_params = {'conv2d_layers':       [ 180, 150, 150, 100, 50, 20 ],
                       'activation':          'relu',
-                      'kernel_size':         3,
+                      'kernel_size':         6,
                       'max_pool':            False,
                       'dropout':             0.4,
                       'batch_normalization': True,
-                      'dense':               10,
+                      'dense':               20,
                       'out_activation':      True,
                       'l1_regularization':   0.0,
                       'l2_regularization':   0.0
@@ -295,7 +296,7 @@ def compute(df_name, rounding=np.floor, seed=42):
     # Fit the model
     model_h21_history = model_h21_cnn.fit(x=df_matrix_nn_train,
                                           y=h21_labels_nn_train,
-                                          batch_size=32,
+                                          batch_size=64,
                                           epochs=1000,
                                           verbose=0,
                                           callbacks=callbacks_h21,
@@ -371,3 +372,6 @@ def compute(df_name, rounding=np.floor, seed=42):
     save_fig('cnn_matrix_sequential_h21_error_eng')
     # plt.show()
     plt.close(fig)
+
+    # Clear Tensorflow session
+    K.clear_session()

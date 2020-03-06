@@ -18,7 +18,8 @@ assert tf.__version__ >= '2.0.0'  # newest version
 
 from os                          import path
 from joblib                      import load, dump
-# from sklearn.preprocessing       import StandardScaler
+from sklearn.pipeline            import Pipeline
+from sklearn.preprocessing       import StandardScaler, MinMaxScaler
 from sklearn.model_selection     import train_test_split
 from tensorflow.keras            import backend as K
 from tensorflow.keras.optimizers import Adam
@@ -116,11 +117,25 @@ def compute(df_name, rounding=np.floor, seed=42):
                                                              shuffle=True
                                                             )
 
-    # Apply StandardScaler to the input
-    # std_scal = StandardScaler()
+    # # Apply scaler to the input
+    # scal = Pipeline([('normalizer', MinMaxScaler()),
+    #                  ('standardizer', StandardScaler())])
+    # scal = MinMaxScaler()
 
-    # df_matrix_train  = std_scal.fit_transform(df_matrix_train)
-    # df_matrix_test   = std_scal.transform(df_matrix_test)
+    # df_matrix_train  = scal.fit_transform(df_matrix_train)
+    # df_matrix_test   = scal.transform(df_matrix_test)
+
+    # df_num_cp_train = scal.fit_transform(df_num_cp_train.reshape(-1,1))
+    # df_num_cp_test = scal.transform(df_num_cp_test.reshape(-1,1))
+
+    # df_dim_cp_train = scal.fit_transform(df_dim_cp_train)
+    # df_dim_cp_test = scal.transform(df_dim_cp_test)
+
+    # df_eng_h11_train = scal.fit_transform(df_eng_h11_train)
+    # df_eng_h11_test = scal.transform(df_eng_h11_test)
+
+    # df_eng_h21_train = scal.fit_transform(df_eng_h21_train)
+    # df_eng_h21_test = scal.transform(df_eng_h21_test)
 
     # Reshape the matrix
     df_matrix_nn_train = df_matrix_train.reshape(-1,12,15,1)
@@ -202,17 +217,21 @@ def compute(df_name, rounding=np.floor, seed=42):
     matrix_pca_input_test_conv  = K.reshape(df_eng_h21_nn_test[:,28:], (-1,81,1))
 
     # Build, compile and fit the model:
-    model_cnn = build_conv_model_2(num_cp_dense_layers=([],[]),
-                                   dim_cp_conv1d_layers=([],[15,30,30,15]),
-                                   dim_h0_amb_conv1d_layers=([20],[20,20,10]),
-                                   matrix_conv1d_layers=([200, 200, 100],
-                                                         [300, 300, 200, 200, 100]),
+    model_cnn = build_conv_model_2(num_cp_dense_layers=([10],
+                                                        [10, 10]),
+                                   dim_cp_conv1d_layers=([10],
+                                                         [10, 10, 5]),
+                                   dim_h0_amb_conv1d_layers=([],
+                                                             [15, 10, 10, 5]),
+                                   matrix_conv1d_layers=([80, 40, 20],
+                                                         [180, 150, 150, 100, 50, 20]),
                                    activation='relu',
-                                   kernel_size=3,
-                                   max_pool=[0,0],
-                                   dropout=[0.5,0.4],
+                                   kernel_size=(2,2),
+                                   pca_kernel_size=(3,3),
+                                   max_pool=(0,0),
+                                   dropout=(0.2,0.4),
                                    batch_normalization=True,
-                                   dense=[10],
+                                   dense=[10, 5, 5],
                                    out_activation=True,
                                    l1_regularization=(0.0,0.0),
                                    l2_regularization=(0.0,0.0)
@@ -358,3 +377,6 @@ def compute(df_name, rounding=np.floor, seed=42):
     save_fig('cnn_functional_pca_error_eng')
     # plt.show()
     plt.close(fig)
+
+    # Clear Tensorflow session
+    K.clear_session()

@@ -69,12 +69,12 @@ environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # do not print Tensorflow warnings
 def main():
 
     ROOT_DIR = '.'      # root directory
-    LOG_DIR  = 'log'    # logs directory
+    # LOG_DIR  = 'log'    # logs directory
 
-    # Create and/or define the directories
-    LOG_PATH = path.join(ROOT_DIR, LOG_DIR)
-    if path.isdir(LOG_PATH) is False:
-        mkdir(LOG_PATH)
+    # # Create and/or define the directories
+    # LOG_PATH = path.join(ROOT_DIR, LOG_DIR)
+    # if path.isdir(LOG_PATH) is False:
+    #     mkdir(LOG_PATH)
 
     # Name of the dataset
     if len(sys.argv) > 1:
@@ -150,7 +150,7 @@ def main():
     # functional_matrix_pca.compute(DB_NAME, rounding=np.rint, seed=RAND)
     # functional_matrix_pca_dense.compute(DB_NAME, rounding=np.rint, seed=RAND)
 
-    # Stack the algorithms
+    # # Stack the algorithms
     stacking.compute(DB_NAME, n_iter=50, seed=RAND)
 
 if __name__ == '__main__':

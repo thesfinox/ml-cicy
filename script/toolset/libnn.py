@@ -16,7 +16,7 @@ assert np.__version__  >  '1.16'   # to avoid issues with pytables
 assert sk.__version__  >= '0.22.1' # for the recent implementation
 assert tf.__version__  >= '2.0.0'  # newest version
 
-from os                            import path
+from os                            import path, mkdir
 from tensorflow                    import keras
 from tensorflow.keras.regularizers import l1_l2
 from tensorflow.keras.models       import Model, Sequential, save_model, \

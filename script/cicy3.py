@@ -113,45 +113,45 @@ def main():
         tar.extract(DB_FILE)
         print('Extracted {}'.format(DB_PATH), flush=True)
 
-    # # Load the database
-    # df = load_dataset(DB_PATH)
+    # Load the database
+    df = load_dataset(DB_PATH)
 
-    # # Create visualizations and plots from the dataset (returns cleaned dataset)
-    # df = data_visualization(df)
+    # Create visualizations and plots from the dataset (returns cleaned dataset)
+    df = data_visualization(df)
 
-    # # Extract features and labels
-    # data_extraction(df, DB_NAME)
+    # Extract features and labels
+    data_extraction(df, DB_NAME)
 
-    # # Now consider the clustering analysis
-    # cluster_range = clustering(DB_NAME, seed=RAND)
+    # Now consider the clustering analysis
+    cluster_range = clustering(DB_NAME, seed=RAND)
 
-    # # Now consider the PCA analysis
-    # pca(DB_NAME, seed=RAND)
+    # Now consider the PCA analysis
+    pca(DB_NAME, seed=RAND)
 
-    # # Compute the feature importances
-    # importances(DB_NAME, cluster_range, seed=RAND)
+    # Compute the feature importances
+    importances(DB_NAME, cluster_range, seed=RAND)
 
-    # # Extract usable features
-    # feature_extract(DB_NAME)
+    # Extract usable features
+    feature_extract(DB_NAME)
 
-    # # Compute algorithms
-    # linear_regression.compute(DB_NAME, rounding=np.floor, seed=RAND)
-    # lasso.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
-    # elastic_net.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
-    # ridge.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
-    # linear_svr.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
-    # svr_rbf.compute(DB_NAME, n_iter=50, rounding=np.rint, seed=RAND)
-    # xgb.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
-    # xgbrf.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
+    # Compute algorithms
+    linear_regression.compute(DB_NAME, rounding=np.floor, seed=RAND)
+    lasso.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
+    elastic_net.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
+    ridge.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
+    linear_svr.compute(DB_NAME, n_iter=50, rounding=np.floor, seed=RAND)
+    svr_rbf.compute(DB_NAME, n_iter=50, rounding=np.rint, seed=RAND)
+    xgb.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
+    xgbrf.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
     rnd_for.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
     grd_boost.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
-    # sequential_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
-    # functional_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
-    # functional_matrix_pca.compute(DB_NAME, rounding=np.rint, seed=RAND)
-    # functional_matrix_pca_dense.compute(DB_NAME, rounding=np.rint, seed=RAND)
+    sequential_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
+    functional_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
+    functional_matrix_pca.compute(DB_NAME, rounding=np.rint, seed=RAND)
+    functional_matrix_pca_dense.compute(DB_NAME, rounding=np.rint, seed=RAND)
 
-    # # Stack the algorithms
-    # stacking.compute(DB_NAME, n_iter=50, seed=RAND)
+    # Stack the algorithms
+    stacking.compute(DB_NAME, n_iter=50, seed=RAND)
 
 if __name__ == '__main__':
     main()

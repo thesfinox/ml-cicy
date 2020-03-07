@@ -11,7 +11,7 @@ import numpy as np
 
 assert np.__version__ >  '1.16'   # to avoid issues with pytables
 
-from os                   import path
+from os                   import path, mkdir
 from joblib               import dump
 from toolset.libutilities import *
 from toolset.libplot      import *

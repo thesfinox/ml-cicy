@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 assert np.__version__  >  '1.16' # to avoid issues with pytables
 
-from os import path
+from os import path, mkdir
 
 # Set label sizes
 mpl.rc('axes', labelsize=12)

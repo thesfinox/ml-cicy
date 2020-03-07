@@ -17,7 +17,7 @@ assert np.__version__ >  '1.16'   # to avoid issues with pytables
 assert sk.__version__ >= '0.22.1' # for the recent implementation
 assert tf.__version__ >= '2.0.0'  # newest version
 
-from os                          import path
+from os                          import path, mkdir
 from joblib                      import load, dump
 from sklearn.pipeline            import Pipeline
 from sklearn.preprocessing       import StandardScaler, MinMaxScaler
@@ -255,16 +255,16 @@ def compute(df_name, rounding=np.floor, seed=42):
     # Create callbacks
     callbacks = [EarlyStopping(monitor='val_loss',
                                patience=80,
-                               verbose=0),
+                               verbose=1),
                  ReduceLROnPlateau(monitor='val_loss',
                                    factor=0.3,
                                    patience=50,
-                                   verbose=0),
+                                   verbose=1),
                  ModelCheckpoint(path.join(MOD_PATH,
                                            'cnn_functional_pca_dense.h5'),
                                  monitor='val_loss',
                                  save_best_only=True,
-                                 verbose=0)
+                                 verbose=1)
                 ]
 
     # Fit the model
@@ -276,7 +276,7 @@ def compute(df_name, rounding=np.floor, seed=42):
                                          h21_labels_nn_train],
                                       batch_size=32,
                                       epochs=1000,
-                                      verbose=0,
+                                      verbose=1,
                                       callbacks=callbacks,
                                       validation_data=([num_cp_input_val,
                                                         dim_cp_input_val,

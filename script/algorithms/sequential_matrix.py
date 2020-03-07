@@ -16,7 +16,7 @@ assert np.__version__ >  '1.16'   # to avoid issues with pytables
 assert sk.__version__ >= '0.22.1' # for the recent implementation
 assert tf.__version__ >= '2.0.0'  # newest version
 
-from os                          import path
+from os                          import path, mkdir
 from joblib                      import load, dump
 from sklearn.pipeline            import Pipeline
 from sklearn.preprocessing       import MinMaxScaler, StandardScaler
@@ -153,16 +153,16 @@ def compute(df_name, rounding=np.floor, seed=42):
     # Create callbacks
     callbacks_h11 = [EarlyStopping(monitor='val_mean_squared_error',
                                    patience=50,
-                                   verbose=0),
+                                   verbose=1),
                      ReduceLROnPlateau(monitor='val_mean_squared_error',
                                        factor=0.3,
                                        patience=30,
-                                       verbose=0),
+                                       verbose=1),
                      ModelCheckpoint(path.join(MOD_PATH,
                                                'cnn_matrix_sequential_h11.h5'),
                                      monitor='val_mean_squared_error',
                                      save_best_only=True,
-                                     verbose=0)
+                                     verbose=1)
                     ]
 
     # Fit the model
@@ -170,7 +170,7 @@ def compute(df_name, rounding=np.floor, seed=42):
                                           y=h11_labels_nn_train,
                                           batch_size=16,
                                           epochs=1000,
-                                          verbose=0,
+                                          verbose=1,
                                           callbacks=callbacks_h11,
                                           validation_data=(df_matrix_nn_val,
                                                            h11_labels_nn_val)

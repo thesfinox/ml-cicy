@@ -15,7 +15,7 @@ import pandas  as pd
 assert np.__version__  >  '1.16'   # to avoid issues with pytables
 assert sk.__version__  >= '0.22.1' # for the recent implementation
 
-from os           import path
+from os           import path, mkdir
 from sklearn.base import BaseEstimator, TransformerMixin
 
 # Load a Pandas dataset

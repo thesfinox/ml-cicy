@@ -11,6 +11,9 @@ import numpy             as np
 import matplotlib        as mpl
 import matplotlib.pyplot as plt
 
+# Select headless backend
+mpl.use('agg')
+
 assert np.__version__  >  '1.16' # to avoid issues with pytables
 
 from os import path, mkdir

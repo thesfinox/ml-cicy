@@ -38,7 +38,7 @@ def data_extraction(df, df_name):
             select_dtypes(include=['object']).columns)
 
     # Extract tensor and vectors
-    print('\nExtracting tensors...')
+    print('\nExtracting tensors...', flush=True)
 
     for feature in vector_features:
         df_features[feature] = ExtractTensor(flatten=False).\
@@ -53,7 +53,7 @@ def data_extraction(df, df_name):
 
 
     # Plot the correlation matrix as a reference
-    print('\nPlotting the correlation matrix:')
+    print('\nPlotting the correlation matrix:', flush=True)
 
     fig, plot = plt.subplots(1, 3, figsize=(18,5))
     fig.tight_layout()
@@ -77,13 +77,13 @@ def data_extraction(df, df_name):
 
 
     # Save 'production-ready' dataframe to file
-    print('\nSaving features and labels to file...')
+    print('\nSaving features and labels to file...', flush=True)
     DB_PROD_NAME = df_name + '_features_production'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5')
     df_features.to_hdf(DB_PROD_PATH, key='df_features')
-    print('    Features have been saved to file!')
+    print('    Features have been saved to file!', flush=True)
 
     DB_PROD_NAME = df_name + '_labels_production'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5')
     df_labels.to_hdf(DB_PROD_PATH, key='df_labels')
-    print('    Labels have been saved to file!')
+    print('    Labels have been saved to file!', flush=True)

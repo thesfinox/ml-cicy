@@ -22,6 +22,8 @@ script/*.tar.gz
 script/*.pdf
 script/*.xz
 script/*.txt
+script/*/*.bak
+script/*.bak
 
 # Do not upload pdf files in the tex directory
 

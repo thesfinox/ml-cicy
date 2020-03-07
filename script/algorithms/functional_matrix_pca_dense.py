@@ -42,7 +42,7 @@ if path.isdir(MOD_PATH) is False:
 def compute(df_name, rounding=np.floor, seed=42):
 
     # Print banner
-    print('\n----- KERAS FUNCTIONAL MODEL (PCA) -----')
+    print('\n----- KERAS FUNCTIONAL MODEL (PCA) -----', flush=True)
 
     # Set random seed
     RAND = seed
@@ -56,42 +56,42 @@ def compute(df_name, rounding=np.floor, seed=42):
     if path.isfile(DB_PROD_PATH):
         df_matrix = load(DB_PROD_PATH)
     else:
-        print('Cannot read the matrix database!')
+        print('Cannot read the matrix database!', flush=True)
         
     DB_PROD_NAME = df_name + '_num_cp'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5.xz')
     if path.isfile(DB_PROD_PATH):
         df_num_cp = load(DB_PROD_PATH)
     else:
-        print('Cannot read the num_cp database!')
+        print('Cannot read the num_cp database!', flush=True)
         
     DB_PROD_NAME = df_name + '_dim_cp'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5.xz')
     if path.isfile(DB_PROD_PATH):
         df_dim_cp = load(DB_PROD_PATH)
     else:
-        print('Cannot read the dim_cp database!')
+        print('Cannot read the dim_cp database!', flush=True)
         
     DB_PROD_NAME = df_name + '_eng_h11'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5.xz')
     if path.isfile(DB_PROD_PATH):
         df_eng_h11 = load(DB_PROD_PATH)
     else:
-        print('Cannot read the eng_h11 database!')
+        print('Cannot read the eng_h11 database!', flush=True)
         
     DB_PROD_NAME = df_name + '_eng_h21'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5.xz')
     if path.isfile(DB_PROD_PATH):
         df_eng_h21 = load(DB_PROD_PATH)
     else:
-        print('Cannot read the eng_h21 database!')
+        print('Cannot read the eng_h21 database!', flush=True)
         
     DB_PROD_NAME = df_name + '_labels_production'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5')
     if path.isfile(DB_PROD_PATH):
         df_labels = pd.read_hdf(DB_PROD_PATH)
     else:
-        print('Cannot read the labels database!')
+        print('Cannot read the labels database!', flush=True)
         
     h11_labels   = ExtractTensor(flatten=True).fit_transform(df_labels['h11'])
     h21_labels   = ExtractTensor(flatten=True).fit_transform(df_labels['h21'])
@@ -293,7 +293,7 @@ def compute(df_name, rounding=np.floor, seed=42):
         model_cnn = load_model(path.join(MOD_PATH,
                                          'cnn_functional_pca_dense.h5'))
     else:
-        print('\nCannot load the best model!')
+        print('\nCannot load the best model!', flush=True)
         
     print('\n    Accuracy (rint) on the training set for h_11: {:.3f}%'.format(\
                  accuracy_score(h11_labels_nn_train,
@@ -345,7 +345,7 @@ def compute(df_name, rounding=np.floor, seed=42):
                                                            reshape(-1,),
                                 rounding=np.rint)*100))
 
-    print('Plotting error distributions...')
+    print('Plotting error distributions...', flush=True)
     fig, plot = plt.subplots(figsize=(6, 5))
     fig.tight_layout()
 

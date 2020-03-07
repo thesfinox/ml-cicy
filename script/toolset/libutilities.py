@@ -22,11 +22,11 @@ from sklearn.base import BaseEstimator, TransformerMixin
 def load_dataset(dataset):
 
     if path.isfile(dataset):
-        print('Reading database...')
+        print('Reading database...', flush=True)
         df = pd.read_hdf(dataset)
-        print('Database loaded.')
+        print('Database loaded.', flush=True)
     else:
-        print('Cannot read the database!')
+        print('Cannot read the database!', flush=True)
 
     return df
 
@@ -132,7 +132,7 @@ def gridcv_score(estimator, rounding=np.rint):
     accuracy    = cv_best_res.loc[:, 'mean_test_score'].values[0]
     std         = cv_best_res.loc[:, 'std_test_score'].values[0]
     
-    print('    Best parameters: {}'.format(best_params))
+    print('    Best parameters: {}'.format(best_params), flush=True)
     print('    Accuracy ({}) of cross-validation: '.format(rounding.__name__),
           '({:.3f} ± {:.3f})%'.format(accuracy*100, std*100))
     

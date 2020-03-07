@@ -29,14 +29,14 @@ def importances(df_name, cluster_range, seed=42):
     if path.isfile(DB_PROD_PATH):
         df = pd.read_hdf(DB_PROD_PATH)
     else:
-        print('Cannot read the database!')
+        print('Cannot read the database!', flush=True)
 
     DB_PROD_NAME = df_name + '_labels_production'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5')
     if path.isfile(DB_PROD_PATH):
         df_labels = pd.read_hdf(DB_PROD_PATH)
     else:
-        print('Cannot read the labels database!')
+        print('Cannot read the labels database!', flush=True)
 
     # Divide scalar, vector and tensor features
     scalar_features = list(df.\
@@ -71,14 +71,14 @@ def importances(df_name, cluster_range, seed=42):
                'random_state': RAND
              }
 
-    print('\nStudying feature importances:')
+    print('\nStudying feature importances:', flush=True)
 
     dtree_h11 = RandomForestRegressor(**params)
-    print('    Fitting decision trees for h_11...')
+    print('    Fitting decision trees for h_11...', flush=True)
     dtree_h11.fit(dtree_features, df_labels['h11'])
 
     dtree_h21 = RandomForestRegressor(**params)
-    print('    Fitting decision trees for h_21...')
+    print('    Fitting decision trees for h_21...', flush=True)
     dtree_h21.fit(dtree_features, df_labels['h21'])
 
     # check accuracy just "for fun"

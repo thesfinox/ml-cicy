@@ -28,7 +28,7 @@ def clustering(df_name, seed=42):
     if path.isfile(DB_PROD_PATH):
         df = pd.read_hdf(DB_PROD_PATH)
     else:
-        print('Cannot read the database!')
+        print('Cannot read the database!', flush=True)
 
     # Divide scalar, vector and tensor features
     scalar_features = list(df.\
@@ -54,9 +54,9 @@ def clustering(df_name, seed=42):
                              ],
                              dtype='int32'
                             )
-    print('\nComputing clustering:')
+    print('\nComputing clustering:', flush=True)
     for n in cluster_range:
-        print('    {:d} clusters...'.format(n))
+        print('    {:d} clusters...'.format(n), flush=True)
         kmeans = KMeans(n_clusters=n, random_state=RAND, n_jobs=-1)
         kmeans.fit_transform(np.stack(df['matrix_flat']))
         kmeans_labels[:,n-min(cluster_range)] = kmeans.labels_
@@ -69,10 +69,10 @@ def clustering(df_name, seed=42):
             tensor_features] # simple reorder of the dataframe
 
 
-    print('\nSaving dataset to file...')
+    print('\nSaving dataset to file...', flush=True)
     DB_PROD_NAME = df_name + '_features_analysis'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5')
     df.to_hdf(DB_PROD_PATH, key='df')
-    print('Clustering labels have been saved to file!')
+    print('Clustering labels have been saved to file!', flush=True)
 
     return cluster_range

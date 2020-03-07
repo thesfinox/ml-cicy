@@ -29,7 +29,7 @@ def pca(df_name, seed=42):
     if path.isfile(DB_PROD_PATH):
         df = pd.read_hdf(DB_PROD_PATH)
     else:
-        print('Cannot read the database!')
+        print('Cannot read the database!', flush=True)
 
     # Divide scalar, vector and tensor features
     scalar_features = list(df.\
@@ -49,7 +49,7 @@ def pca(df_name, seed=42):
     df['matrix_flat'] = ExtractTensor(flatten=True).fit_transform(df['matrix'])
 
     # Compute the PCA analysis with 2 components (plot-ready)
-    print('\nComputing PCA with 2 components...')
+    print('\nComputing PCA with 2 components...', flush=True)
     pca2             = PCA(n_components=2, random_state=RAND)
     matrix_pca_2     = pca2.fit_transform(np.stack(df['matrix_flat']))
     matrix_pca_2_var = pca2.explained_variance_ratio_
@@ -58,7 +58,7 @@ def pca(df_name, seed=42):
           '{:.3f}% for the second component'.format(matrix_pca_2_var[1]*100))
 
     # Compute the PCA analysis keeping 99% of variance
-    print('\nComputing PCA with 99% variance...')
+    print('\nComputing PCA with 99% variance...', flush=True)
     df['matrix_pca99'] = list(PCA(n_components=0.99, random_state=RAND).\
                     fit_transform(np.stack(df['matrix_flat'])))
     print('    No. of components of the PCA with 99% variance preserved: {:d}'.\
@@ -71,11 +71,11 @@ def pca(df_name, seed=42):
            ] # simple reorder of the dataframe
 
     # Save dataframe to file
-    print('\nSaving PCA to file...')
+    print('\nSaving PCA to file...', flush=True)
     DB_PROD_NAME = df_name + '_features_analysis'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5')
     df.to_hdf(DB_PROD_PATH, key='df')
-    print('PCA has been saved to file!')
+    print('PCA has been saved to file!', flush=True)
 
 
     # Use the PCA with 2 components to plot the distribution of h_11 and h_21
@@ -84,7 +84,7 @@ def pca(df_name, seed=42):
     if path.isfile(DB_PROD_PATH):
         df_labels = pd.read_hdf(DB_PROD_PATH)
     else:
-        print('Cannot read the database!')
+        print('Cannot read the database!', flush=True)
 
     fig, plot = plt.subplots(1, 2, figsize=(12,5))
     fig.tight_layout()

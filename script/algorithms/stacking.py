@@ -121,13 +121,13 @@ def meta_fit(estimator,         # Fit the same estimator with scalers
              y_test,
              rounding=np.rint):
 
-    print('  --> Fit without scalers:')
+    print('  --> Fit without scalers:', flush=True)
     estimator.fit(X_validation, y_validation)
     gridcv_score(estimator, rounding=rounding)
     prediction_score(estimator, X_test, y_test, rounding=rounding)
     
     for scaler in scalers:
-        print('  --> Fit with {}:'.format(scaler[0]))
+        print('  --> Fit with {}:'.format(scaler[0]), flush=True)
         X_validation = scaler[1].fit_transform(X_validation)
         X_test       = scaler[1].transform(X_test)
         estimator.fit(X_validation, y_validation)
@@ -137,7 +137,7 @@ def meta_fit(estimator,         # Fit the same estimator with scalers
 def compute(df_name, n_iter=30, seed=42):
 
     # Print banner
-    print('\n----- STACKING -----')
+    print('\n----- STACKING -----', flush=True)
 
     # Set random seed
     RAND = seed
@@ -148,8 +148,8 @@ def compute(df_name, n_iter=30, seed=42):
     cv = KFold(n_splits=6, shuffle=True, random_state=RAND)
 
     # Load models
-    print('\nDefining models:')
-    print('    Define LinearRegression...')
+    print('\nDefining models:', flush=True)
+    print('    Define LinearRegression...', flush=True)
     search_params = {'fit_intercept': [ True, False ],
                      'normalize':     [ True, False ]
                     }
@@ -173,7 +173,7 @@ def compute(df_name, n_iter=30, seed=42):
                                verbose=0
                               )
 
-    print('    Define Lasso...')
+    print('    Define Lasso...', flush=True)
     search_params = {'alpha':         Real(1e-6, 1e2,
                                            base=10,
                                            prior='log-uniform'),
@@ -205,7 +205,7 @@ def compute(df_name, n_iter=30, seed=42):
                               verbose=0
                              )
 
-    print('    Define ElasticNet...')
+    print('    Define ElasticNet...', flush=True)
     search_params = {'alpha':         Real(1e-6, 1e2,
                                            base=10,
                                            prior='log-uniform'),
@@ -239,7 +239,7 @@ def compute(df_name, n_iter=30, seed=42):
                               verbose=0
                              )
 
-    print('    Define Ridge...')
+    print('    Define Ridge...', flush=True)
     search_params = {'alpha':         Real(1e-6, 1e2,
                                            base=10,
                                            prior='log-uniform'),
@@ -270,7 +270,7 @@ def compute(df_name, n_iter=30, seed=42):
                               verbose=0
                              )
 
-    print('    Define LinearSVR...')
+    print('    Define LinearSVR...', flush=True)
     search_params = {'C':                 Real(1e-4, 1e4,
                                                base=10,
                                                prior='log-uniform'),
@@ -306,7 +306,7 @@ def compute(df_name, n_iter=30, seed=42):
                               verbose=0
                              )
 
-    print('    Define SVR...')
+    print('    Define SVR...', flush=True)
     search_params = {'C':         Real(1e-4, 1e4,
                                        base=10,
                                        prior='log-uniform'),
@@ -342,7 +342,7 @@ def compute(df_name, n_iter=30, seed=42):
                               verbose=0
                              )
 
-    print('    Define GradientBoostingRegressor...')
+    print('    Define GradientBoostingRegressor...', flush=True)
     search_params = {'learning_rate':     Real(1e-5, 1e-1,
                                                base=10,
                                                prior='log-uniform'),
@@ -379,7 +379,7 @@ def compute(df_name, n_iter=30, seed=42):
                               verbose=0
                              )
 
-    print('    Define RandomForestRegressor...')
+    print('    Define RandomForestRegressor...', flush=True)
     search_params = {'n_estimators':      Integer(2, 75,
                                                   prior='uniform'),
                      'min_samples_split': Integer(2, 10,
@@ -412,18 +412,18 @@ def compute(df_name, n_iter=30, seed=42):
                                       verbose=0
                                      )
 
-    print('    Define the Sequential Keras model...')
+    print('    Define the Sequential Keras model...', flush=True)
     seq_h11     = load_model(path.join(MOD_PATH,
                                        'cnn_matrix_sequential_h11.h5'))
     seq_h21     = load_model(path.join(MOD_PATH, 'cnn_matrix_sequential_h21.h5'))
 
-    print('    Define the Functional Keras model...')
+    print('    Define the Functional Keras model...', flush=True)
     matrix_functional           = load_model(path.join(MOD_PATH,
                                                        'cnn_functional.h5'))
-    print('    Define the Functional Keras model with PCA...')
+    print('    Define the Functional Keras model with PCA...', flush=True)
     matrix_functional_pca       = load_model(path.join(MOD_PATH,
                                                        'cnn_functional_pca.h5'))
-    print('    Define the Functional Keras model with PCA and Dense layers...')
+    print('    Define the Functional Keras model with PCA and Dense layers...', flush=True)
     matrix_functional_pca_dense = load_model(path.join(MOD_PATH,
                                                        'cnn_functional_pca_dense.h5'))
 
@@ -434,28 +434,28 @@ def compute(df_name, n_iter=30, seed=42):
     if path.isfile(DB_PROD_PATH):
         df_matrix = load(DB_PROD_PATH)
     else:
-        print('Cannot read the matrix database!')
+        print('Cannot read the matrix database!', flush=True)
         
     DB_PROD_NAME = df_name + '_eng_h11'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5.xz')
     if path.isfile(DB_PROD_PATH):
         df_eng_h11 = load(DB_PROD_PATH)
     else:
-        print('Cannot read the eng_h11 database!')
+        print('Cannot read the eng_h11 database!', flush=True)
         
     DB_PROD_NAME = df_name + '_eng_h21'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5.xz')
     if path.isfile(DB_PROD_PATH):
         df_eng_h21 = load(DB_PROD_PATH)
     else:
-        print('Cannot read the eng_h21 database!')
+        print('Cannot read the eng_h21 database!', flush=True)
         
     DB_PROD_NAME = df_name + '_labels_production'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5')
     if path.isfile(DB_PROD_PATH):
         df_labels = pd.read_hdf(DB_PROD_PATH)
     else:
-        print('Cannot read the labels database!')
+        print('Cannot read the labels database!', flush=True)
 
     # Split into training and test
     df_matrix_train, df_matrix_test, \
@@ -483,56 +483,56 @@ def compute(df_name, n_iter=30, seed=42):
 
 
     # Train the algorithms:
-    print('\nTraining models:')
-    print('    Fitting the LinearRegressor...')
+    print('\nTraining models:', flush=True)
+    print('    Fitting the LinearRegressor...', flush=True)
     lin_reg_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
     lin_reg_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
     lin_reg_h11 = lin_reg_h11.best_estimator_
     lin_reg_h21 = lin_reg_h21.best_estimator_
 
-    print('    Fitting the Lasso...')
+    print('    Fitting the Lasso...', flush=True)
     lasso_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
     lasso_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
     lasso_h11 = lasso_h11.best_estimator_
     lasso_h21 = lasso_h21.best_estimator_
 
-    print('    Fitting the ElasticNet...')
+    print('    Fitting the ElasticNet...', flush=True)
     el_net_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
     el_net_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
     el_net_h11 = el_net_h11.best_estimator_
     el_net_h21 = el_net_h21.best_estimator_
 
-    print('    Fitting the Ridge...')
+    print('    Fitting the Ridge...', flush=True)
     ridge_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
     ridge_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
     ridge_h11 = ridge_h11.best_estimator_
     ridge_h21 = ridge_h21.best_estimator_
 
-    print('    Fitting the LinearSVR...')
+    print('    Fitting the LinearSVR...', flush=True)
     lin_svr_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
     lin_svr_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
     lin_svr_h11 = lin_svr_h11.best_estimator_
     lin_svr_h21 = lin_svr_h21.best_estimator_
 
-    print('    Fitting the SVR...')
+    print('    Fitting the SVR...', flush=True)
     svr_rbf_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
     svr_rbf_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
     svr_rbf_h11 = svr_rbf_h11.best_estimator_
     svr_rbf_h21 = svr_rbf_h21.best_estimator_
 
-    print('    Fitting the GradientBoostingRegressor...')
+    print('    Fitting the GradientBoostingRegressor...', flush=True)
     grd_boost_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
     grd_boost_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
     grd_boost_h11 = grd_boost_h11.best_estimator_
     grd_boost_h21 = grd_boost_h21.best_estimator_
 
-    print('    Fitting the RandomForestRegressor...')
+    print('    Fitting the RandomForestRegressor...', flush=True)
     rnd_for_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
     rnd_for_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
     rnd_for_h11 = rnd_for_h11.best_estimator_
     rnd_for_h21 = rnd_for_h21.best_estimator_
 
-    print('    Fitting the Sequential Keras models...')
+    print('    Fitting the Sequential Keras models...', flush=True)
     seq_h11.fit(x=K.cast(df_matrix_train.reshape(-1,12,15,1), dtype='float64'),
                 y=K.cast(df_labels_train['h11'], dtype='float64'),
                 validation_split=0.2,
@@ -552,7 +552,7 @@ def compute(df_name, n_iter=30, seed=42):
 
     K.clear_session()
 
-    print('    Fitting the Functional Conv2D Keras models...')
+    print('    Fitting the Functional Conv2D Keras models...', flush=True)
     matrix_functional.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1),
                                     dtype='float64'),
                              K.cast(df_eng_h21_train[:,1:13].reshape(-1,12,1),
@@ -572,7 +572,7 @@ def compute(df_name, n_iter=30, seed=42):
 
     K.clear_session()
 
-    print('    Fitting the Functional Conv1D Keras models...')
+    print('    Fitting the Functional Conv1D Keras models...', flush=True)
     matrix_functional_pca.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1),
                                         dtype='float64'),
                                  K.cast(df_eng_h21_train[:,1:13].reshape(-1,12,1),
@@ -592,7 +592,7 @@ def compute(df_name, n_iter=30, seed=42):
 
     K.clear_session()
 
-    print('    Fitting the Functional Dense Keras models...')
+    print('    Fitting the Functional Dense Keras models...', flush=True)
     matrix_functional_pca_dense.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1), 
                                               dtype='float64'),
                                        K.cast(df_eng_h21_train[:,1:13],
@@ -615,11 +615,11 @@ def compute(df_name, n_iter=30, seed=42):
 
     K.clear_session()
 
-    print('End of the training procedure!')
+    print('End of the training procedure!', flush=True)
 
 
     # Use the trained models to build the second level predictions:
-    print('\nPredictions of the LinearRegressor...')
+    print('\nPredictions of the LinearRegressor...', flush=True)
     lin_reg_h11_predictions_val = lin_reg_h11.predict(df_eng_h11_val)
     print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
                     accuracy_score(df_labels_val['h11'].values,
@@ -642,7 +642,7 @@ def compute(df_name, n_iter=30, seed=42):
                                    lin_reg_h21_predictions_test,
                                    rounding=np.floor)*100))
 
-    print('Predictions of the Lasso...')
+    print('Predictions of the Lasso...', flush=True)
     lasso_h11_predictions_val = lasso_h11.predict(df_eng_h11_val)
     print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
                     accuracy_score(df_labels_val['h11'].values,
@@ -665,7 +665,7 @@ def compute(df_name, n_iter=30, seed=42):
                                    lasso_h21_predictions_test,
                                    rounding=np.floor)*100))
 
-    print('Predictions of the ElasticNet...')
+    print('Predictions of the ElasticNet...', flush=True)
     el_net_h11_predictions_val = el_net_h11.predict(df_eng_h11_val)
     print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
                     accuracy_score(df_labels_val['h11'].values,
@@ -688,7 +688,7 @@ def compute(df_name, n_iter=30, seed=42):
                                    el_net_h21_predictions_test,
                                    rounding=np.floor)*100))
 
-    print('Predictions of the Ridge...')
+    print('Predictions of the Ridge...', flush=True)
     ridge_h11_predictions_val = ridge_h11.predict(df_eng_h11_val)
     print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
                     accuracy_score(df_labels_val['h11'].values,
@@ -711,7 +711,7 @@ def compute(df_name, n_iter=30, seed=42):
                                    ridge_h21_predictions_test,
                                    rounding=np.floor)*100))
 
-    print('Predictions of the LinearSVR...')
+    print('Predictions of the LinearSVR...', flush=True)
     lin_svr_h11_predictions_val = lin_svr_h11.predict(df_eng_h11_val)
     print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
                     accuracy_score(df_labels_val['h11'].values,
@@ -734,7 +734,7 @@ def compute(df_name, n_iter=30, seed=42):
                                    lin_svr_h21_predictions_test,
                                    rounding=np.floor)*100))
 
-    print('Predictions of the SVR...')
+    print('Predictions of the SVR...', flush=True)
     svr_rbf_h11_predictions_val = svr_rbf_h11.predict(df_eng_h11_val)
     print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
                     accuracy_score(df_labels_val['h11'].values,
@@ -757,7 +757,7 @@ def compute(df_name, n_iter=30, seed=42):
                                    svr_rbf_h21_predictions_test,
                                    rounding=np.rint)*100))
 
-    print('Predictions of the GradientBoostingRegressor...')
+    print('Predictions of the GradientBoostingRegressor...', flush=True)
     grd_boost_h11_predictions_val = grd_boost_h11.predict(df_eng_h11_val)
     print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
                     accuracy_score(df_labels_val['h11'].values,
@@ -780,7 +780,7 @@ def compute(df_name, n_iter=30, seed=42):
                                    grd_boost_h21_predictions_test,
                                    rounding=np.floor)*100))
 
-    print('Predictions of the RandomForestRegressor...')
+    print('Predictions of the RandomForestRegressor...', flush=True)
     rnd_for_h11_predictions_val = rnd_for_h11.predict(df_eng_h11_val)
     print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
                     accuracy_score(df_labels_val['h11'].values,
@@ -804,7 +804,7 @@ def compute(df_name, n_iter=30, seed=42):
                                    rounding=np.floor)*100))
 
 
-    print('Predictions of the Sequential Keras models...')
+    print('Predictions of the Sequential Keras models...', flush=True)
     seq_h11_predictions_val = seq_h11.predict(K.cast(df_matrix_val.reshape(-1,12,15,1), dtype='float64'))
     print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
                     accuracy_score(df_labels_val['h11'].values,
@@ -827,7 +827,7 @@ def compute(df_name, n_iter=30, seed=42):
                                    seq_h21_predictions_test,
                                    rounding=np.rint)*100))
 
-    print('Predictions of the Functional Conv2D Keras models...')
+    print('Predictions of the Functional Conv2D Keras models...', flush=True)
     matrix_functional_predictions_val = \
     matrix_functional.predict([K.cast(df_eng_h21_val[:,0].reshape(-1,1),
                                       dtype='float64'),
@@ -864,7 +864,7 @@ def compute(df_name, n_iter=30, seed=42):
                                    matrix_functional_predictions_test[1],
                                    rounding=np.rint)*100))
 
-    print('Predictions of the Functional Conv1D Keras models...')
+    print('Predictions of the Functional Conv1D Keras models...', flush=True)
     matrix_functional_pca_predictions_val = \
     matrix_functional_pca.predict([K.cast(df_eng_h21_val[:,0].reshape(-1,1),
                                           dtype='float64'),
@@ -902,7 +902,7 @@ def compute(df_name, n_iter=30, seed=42):
                                    rounding=np.rint)*100))
 
 
-    print('Predictions of the Functional Dense Keras models...')
+    print('Predictions of the Functional Dense Keras models...', flush=True)
     matrix_functional_pca_dense_predictions_val = \
     matrix_functional_pca_dense.predict([K.cast(df_eng_h21_val[:,0].reshape(-1,1),
                                                 dtype='float64'),
@@ -939,7 +939,7 @@ def compute(df_name, n_iter=30, seed=42):
                                    matrix_functional_pca_dense_predictions_test[1],
                                    rounding=np.rint)*100))
 
-    print('Concatenatig prediction vectors...')
+    print('Concatenatig prediction vectors...', flush=True)
     h11_predictions_val = np.c_[lin_reg_h11_predictions_val,
                                 lasso_h11_predictions_val,
                                 el_net_h11_predictions_val,
@@ -994,7 +994,7 @@ def compute(df_name, n_iter=30, seed=42):
                                 matrix_functional_pca_dense_predictions_test[1]
                                ]
 
-    print('End of the predictions!')
+    print('End of the predictions!', flush=True)
 
 
     # Train a second level meta estimator, such as
@@ -1043,7 +1043,7 @@ def compute(df_name, n_iter=30, seed=42):
                                     verbose=0
                                    )
 
-    print('\nFitting the LinearRegressor for h_11...')
+    print('\nFitting the LinearRegressor for h_11...', flush=True)
     meta_fit(meta_lin_reg_h11,
              scalers,
              h11_predictions_val,
@@ -1052,7 +1052,7 @@ def compute(df_name, n_iter=30, seed=42):
              df_labels_test['h11'].values,
              rounding=rounding_lin_reg)
 
-    print('\nFitting the LinearRegressor for h_21...')
+    print('\nFitting the LinearRegressor for h_21...', flush=True)
     meta_fit(meta_lin_reg_h21,
              scalers,
              h21_predictions_val,
@@ -1096,7 +1096,7 @@ def compute(df_name, n_iter=30, seed=42):
                                      verbose=0
                                     )
 
-    print('\n\nFitting the SVR(kernel=\'rbf\') for h_11...')
+    print('\n\nFitting the SVR(kernel=\'rbf\') for h_11...', flush=True)
     meta_fit(meta_svr_rbf_h11,
              scalers,
              h11_predictions_val,
@@ -1105,7 +1105,7 @@ def compute(df_name, n_iter=30, seed=42):
              df_labels_test['h11'].values,
              rounding=rounding_svr_rbf)
 
-    print('\nFitting the SVR(kernel=\'rbf\') for h_21...')
+    print('\nFitting the SVR(kernel=\'rbf\') for h_21...', flush=True)
     meta_fit(meta_svr_rbf_h21,
              scalers,
              h21_predictions_val,
@@ -1152,7 +1152,7 @@ def compute(df_name, n_iter=30, seed=42):
                                       verbose=0
                                      )
 
-    print('\n\nFitting the RandomForest for h_11...')
+    print('\n\nFitting the RandomForest for h_11...', flush=True)
     meta_fit(meta_rnd_for_h11,
              scalers,
              h11_predictions_val,
@@ -1161,7 +1161,7 @@ def compute(df_name, n_iter=30, seed=42):
              df_labels_test['h11'].values,
              rounding=rounding_rnd_for)
 
-    print('\nFitting the RandomForest for h_21...')
+    print('\nFitting the RandomForest for h_21...', flush=True)
     meta_fit(meta_rnd_for_h21,
              scalers,
              h21_predictions_val,
@@ -1198,7 +1198,7 @@ def compute(df_name, n_iter=30, seed=42):
                                     verbose=0)
                     ]
 
-    print('\nFitting Neural Network for h_11...')
+    print('\nFitting Neural Network for h_11...', flush=True)
     meta_nn_h11.fit(x=K.cast(h11_predictions_val, dtype='float64'),
                     y=K.cast(h11_labels_nn_train, dtype='float64'),
                     batch_size=32,
@@ -1211,7 +1211,7 @@ def compute(df_name, n_iter=30, seed=42):
         meta_nn_h11  = load_model(path.join(MOD_PATH,
                                   'cnn_meta_matrix_sequential_h11.h5'))
     else:
-        print('\nCannot load best model!')
+        print('\nCannot load best model!', flush=True)
 
     prediction_score(meta_nn_h11,
                      h11_predictions_test,
@@ -1246,7 +1246,7 @@ def compute(df_name, n_iter=30, seed=42):
                                      verbose=0)
                     ]
 
-    print('\nFitting Neural Network for h_21...')
+    print('\nFitting Neural Network for h_21...', flush=True)
     meta_nn_h21.fit(x=K.cast(h21_predictions_val, dtype='float64'),
                     y=K.cast(h21_labels_nn_train, dtype='float64'),
                     batch_size=32,
@@ -1259,7 +1259,7 @@ def compute(df_name, n_iter=30, seed=42):
         meta_nn_h21  = load_model(path.join(MOD_PATH,
                                   'cnn_meta_matrix_sequential_h21.h5'))
     else:
-        print('\nCannot load best model!')
+        print('\nCannot load best model!', flush=True)
 
     prediction_score(meta_nn_h21,
                      h21_predictions_test,

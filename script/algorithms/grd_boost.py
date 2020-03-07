@@ -36,7 +36,7 @@ if path.isdir(MOD_PATH) is False:
 def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
 
     # Print banner
-    print('\n----- GRADIENT BOOSTING -----')
+    print('\n----- GRADIENT BOOSTING -----', flush=True)
 
     # Set random seed
     RAND = seed
@@ -51,42 +51,42 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
     if path.isfile(DB_PROD_PATH):
         df_matrix = load(DB_PROD_PATH)
     else:
-        print('Cannot read the matrix database!')
+        print('Cannot read the matrix database!', flush=True)
         
     DB_PROD_NAME = df_name + '_num_cp'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5.xz')
     if path.isfile(DB_PROD_PATH):
         df_num_cp = load(DB_PROD_PATH)
     else:
-        print('Cannot read the num_cp database!')
+        print('Cannot read the num_cp database!', flush=True)
         
     DB_PROD_NAME = df_name + '_dim_cp'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5.xz')
     if path.isfile(DB_PROD_PATH):
         df_dim_cp = load(DB_PROD_PATH)
     else:
-        print('Cannot read the dim_cp database!')
+        print('Cannot read the dim_cp database!', flush=True)
         
     DB_PROD_NAME = df_name + '_eng_h11'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5.xz')
     if path.isfile(DB_PROD_PATH):
         df_eng_h11 = load(DB_PROD_PATH)
     else:
-        print('Cannot read the eng_h11 database!')
+        print('Cannot read the eng_h11 database!', flush=True)
         
     DB_PROD_NAME = df_name + '_eng_h21'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5.xz')
     if path.isfile(DB_PROD_PATH):
         df_eng_h21 = load(DB_PROD_PATH)
     else:
-        print('Cannot read the eng_h21 database!')
+        print('Cannot read the eng_h21 database!', flush=True)
         
     DB_PROD_NAME = df_name + '_labels_production'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5')
     if path.isfile(DB_PROD_PATH):
         df_labels = pd.read_hdf(DB_PROD_PATH)
     else:
-        print('Cannot read the labels database!')
+        print('Cannot read the labels database!', flush=True)
         
     h11_labels   = ExtractTensor(flatten=True).fit_transform(df_labels['h11'])
     h21_labels   = ExtractTensor(flatten=True).fit_transform(df_labels['h21'])
@@ -137,7 +137,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
     # df_eng_h21_test  = std_scal.transform(df_eng_h21_test)
 
     # Compute the algorithm
-    search_params = {'loss':              Categorical(['ls', 'lad', 'huber']),
+    search_params = {'loss':              Categorical(['ls', 'lad']),
                      'learning_rate':     Real(1e-4, 1e1,
                                                base=10,
                                                prior='log-uniform'),
@@ -180,7 +180,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
     #####################################
     # MATRIX BASELINE                   #
     #####################################
-    print('\nFitting the matrix baseline on h_11...')
+    print('\nFitting the matrix baseline on h_11...', flush=True)
     grd_boost_h11.fit(df_matrix_train, h11_labels_train)
     gridcv_score(grd_boost_h11, rounding=rounding)
     prediction_score(grd_boost_h11,
@@ -189,7 +189,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                      use_best_estimator=True,
                      rounding=rounding)
 
-    print('Fitting the matrix baseline on h_21...')
+    print('Fitting the matrix baseline on h_21...', flush=True)
     grd_boost_h21.fit(df_matrix_train, h21_labels_train)
     gridcv_score(grd_boost_h21, rounding=rounding)
     prediction_score(grd_boost_h21,
@@ -198,7 +198,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                      use_best_estimator=True,
                      rounding=rounding)
 
-    print('Plotting error differences...')
+    print('Plotting error differences...', flush=True)
     fig, plot = plt.subplots(figsize=(6, 5))
     fig.tight_layout()
 
@@ -224,7 +224,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
     #####################################
     # NUM_CP BASELINE                   #
     #####################################
-    print('\nFitting the num_cp baseline on h_11...')
+    print('\nFitting the num_cp baseline on h_11...', flush=True)
     grd_boost_h11.fit(df_num_cp_train, h11_labels_train)
     gridcv_score(grd_boost_h11, rounding=rounding)
     prediction_score(grd_boost_h11,
@@ -233,7 +233,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                      use_best_estimator=True,
                      rounding=rounding)
 
-    print('Fitting the num_cp baseline on h_21...')
+    print('Fitting the num_cp baseline on h_21...', flush=True)
     grd_boost_h21.fit(df_num_cp_train, h21_labels_train)
     gridcv_score(grd_boost_h21, rounding=rounding)
     prediction_score(grd_boost_h21,
@@ -242,7 +242,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                      use_best_estimator=True,
                      rounding=rounding)
 
-    print('Plotting error differences...')
+    print('Plotting error differences...', flush=True)
     fig, plot = plt.subplots(figsize=(6, 5))
     fig.tight_layout()
 
@@ -268,7 +268,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
     #####################################
     # DIM_CP BASELINE                   #
     #####################################
-    print('\nFitting the dim_cp baseline on h_11...')
+    print('\nFitting the dim_cp baseline on h_11...', flush=True)
     grd_boost_h11.fit(df_dim_cp_train, h11_labels_train)
     gridcv_score(grd_boost_h11, rounding=rounding)
     prediction_score(grd_boost_h11,
@@ -277,7 +277,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                      use_best_estimator=True,
                      rounding=rounding)
 
-    print('Fitting the dim_cp baseline on h_21...')
+    print('Fitting the dim_cp baseline on h_21...', flush=True)
     grd_boost_h21.fit(df_dim_cp_train, h21_labels_train)
     gridcv_score(grd_boost_h21, rounding=rounding)
     prediction_score(grd_boost_h21,
@@ -286,7 +286,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                      use_best_estimator=True,
                      rounding=rounding)
 
-    print('Plotting error differences...')
+    print('Plotting error differences...', flush=True)
     fig, plot = plt.subplots(figsize=(6, 5))
     fig.tight_layout()
 
@@ -312,7 +312,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
     #####################################
     # FEATURE ENGINEERING               #
     #####################################
-    print('\nFitting the feature engineered dataset on h_11...')
+    print('\nFitting the feature engineered dataset on h_11...', flush=True)
     grd_boost_h11.fit(df_eng_h11_train, h11_labels_train)
     gridcv_score(grd_boost_h11, rounding=rounding)
     prediction_score(grd_boost_h11,
@@ -321,7 +321,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                      use_best_estimator=True,
                      rounding=rounding)
 
-    print('Fitting the feature engineered dataset on h_21...')
+    print('Fitting the feature engineered dataset on h_21...', flush=True)
     grd_boost_h21.fit(df_eng_h21_train, h21_labels_train)
     gridcv_score(grd_boost_h21, rounding=rounding)
     prediction_score(grd_boost_h21,
@@ -330,7 +330,7 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                      use_best_estimator=True,
                      rounding=rounding)
 
-    print('Plotting error differences...')
+    print('Plotting error differences...', flush=True)
     fig, plot = plt.subplots(figsize=(6, 5))
     fig.tight_layout()
 
@@ -354,9 +354,9 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
     plt.close(fig)
 
     # Saving the feature engineered models
-    print('\nSaving models...')
+    print('\nSaving models...', flush=True)
     MOD_FILE = path.join(MOD_PATH, 'grd_boost_h11.joblib.xz')
     dump(grd_boost_h11.best_estimator_, MOD_FILE, compress=('xz',9))
     MOD_FILE = path.join(MOD_PATH, 'grd_boost_h21.joblib.xz')
     dump(grd_boost_h21.best_estimator_, MOD_FILE, compress=('xz',9))
-    print('Models saved!')
+    print('Models saved!', flush=True)

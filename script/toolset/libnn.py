@@ -37,9 +37,9 @@ if gpus:
               '{:d} physical GPUs, '.format(len(gpus)),
               '{:d} logical GPUs.'.format(len(logical_gpus)))
     except RuntimeError as e:
-        print(e)
+        print(e, flush=True)
 else:
-    print('\nNo GPUs in the setup!')
+    print('\nNo GPUs in the setup!', flush=True)
 
 # Define a Sequential Keras model
 def build_cnn_sequential(conv2d_layers,

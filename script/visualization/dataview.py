@@ -26,7 +26,7 @@ def data_visualization(df):
                                      fit_transform(df_noprod)
 
     # Plot the occurrencies of h_11 and h_21
-    print('\nCreating plots of the occurrencies of h_11 and h_21:')
+    print('\nCreating plots of the occurrencies of h_11 and h_21:', flush=True)
 
     fig, plot = plt.subplots(1, 2, figsize=(12,5))
     fig.tight_layout()

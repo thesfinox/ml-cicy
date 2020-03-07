@@ -41,7 +41,7 @@ if path.isdir(MOD_PATH) is False:
 def compute(df_name, rounding=np.floor, seed=42):
 
     # Print banner
-    print('\n----- KERAS SEQUENTIAL MODEL -----')
+    print('\n----- KERAS SEQUENTIAL MODEL -----', flush=True)
 
     # Set random seed
     RAND = seed
@@ -55,14 +55,14 @@ def compute(df_name, rounding=np.floor, seed=42):
     if path.isfile(DB_PROD_PATH):
         df_matrix = load(DB_PROD_PATH)
     else:
-        print('Cannot read the matrix database!')
+        print('Cannot read the matrix database!', flush=True)
         
     DB_PROD_NAME = df_name + '_labels_production'
     DB_PROD_PATH = path.join(ROOT_DIR, DB_PROD_NAME + '.h5')
     if path.isfile(DB_PROD_PATH):
         df_labels = pd.read_hdf(DB_PROD_PATH)
     else:
-        print('Cannot read the labels database!')
+        print('Cannot read the labels database!', flush=True)
         
     h11_labels   = ExtractTensor(flatten=True).fit_transform(df_labels['h11'])
     h21_labels   = ExtractTensor(flatten=True).fit_transform(df_labels['h21'])
@@ -141,7 +141,7 @@ def compute(df_name, rounding=np.floor, seed=42):
                dpi=300)
 
     # Show a summary
-    print('\nSequential model for h_11...')
+    print('\nSequential model for h_11...', flush=True)
     model_h11_cnn.summary()
 
     # Compile the model
@@ -178,7 +178,7 @@ def compute(df_name, rounding=np.floor, seed=42):
 
 
     # Plot validation loss and mean squared error
-    print('Plotting validation loss and metric...')
+    print('Plotting validation loss and metric...', flush=True)
     fig, plot = plt.subplots(1, 2, figsize=(12,5))
     fig.tight_layout()
 
@@ -214,7 +214,7 @@ def compute(df_name, rounding=np.floor, seed=42):
         model_h11_cnn = load_model(path.join(MOD_PATH,
                                              'cnn_matrix_sequential_h11.h5'))
     else:
-        print('\nCannot load best model!')
+        print('\nCannot load best model!', flush=True)
 
     print('    Accuracy (rint) on the training set: {:.3f}%'.format(\
                     accuracy_score(h11_labels_nn_train,
@@ -229,7 +229,7 @@ def compute(df_name, rounding=np.floor, seed=42):
                      h11_labels_test,
                      rounding=np.rint)
 
-    print('Plotting error distribution...')
+    print('Plotting error distribution...', flush=True)
     fig, plot = plt.subplots(figsize=(6, 5))
     fig.tight_layout()
 
@@ -269,7 +269,7 @@ def compute(df_name, rounding=np.floor, seed=42):
                dpi=300)
 
     # Show a summary
-    print('\nSequential model for h_21...')
+    print('\nSequential model for h_21...', flush=True)
     model_h21_cnn.summary()
 
     # Compile the model
@@ -306,7 +306,7 @@ def compute(df_name, rounding=np.floor, seed=42):
 
 
     # Plot validation loss and metrics:
-    print('Plotting validation loss and metric...')
+    print('Plotting validation loss and metric...', flush=True)
     fig, plot = plt.subplots(1, 2, figsize=(12,5))
     fig.tight_layout()
 
@@ -342,7 +342,7 @@ def compute(df_name, rounding=np.floor, seed=42):
         model_h21_cnn = load_model(path.join(MOD_PATH,
                                              'cnn_matrix_sequential_h21.h5')) 
     else:
-        print('\nCannot load the best model!')
+        print('\nCannot load the best model!', flush=True)
         
     print('    Accuracy (rint) on the training set: {:.3f}%'.format(\
                     accuracy_score(h21_labels_nn_train,
@@ -357,7 +357,7 @@ def compute(df_name, rounding=np.floor, seed=42):
                      h21_labels_test,
                      rounding=np.rint)
 
-    print('Plotting error distribution...')
+    print('Plotting error distribution...', flush=True)
     fig, plot = plt.subplots(figsize=(6, 5))
     fig.tight_layout()
 

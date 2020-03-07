@@ -80,14 +80,14 @@ def main():
     if len(sys.argv) > 1:
         DB_NAME = sys.argv[1]
     else:
-        print('Please, provide the name of the database!')
+        print('Please, provide the name of the database!', flush=True)
         exit(1)
 
     # Random seed
     if len(sys.argv) > 2:
         RAND = int(sys.argv[2])
     else:
-        print('Please, provide the random seed!')
+        print('Please, provide the random seed!', flush=True)
         exit(1)
 
     # Download the dataset
@@ -98,9 +98,9 @@ def main():
     # Request the file
     TAR_PATH = path.join(ROOT_DIR, TAR)
     if not path.isfile(TAR_PATH):
-        print('Requesting database from source URL...')
+        print('Requesting database from source URL...', flush=True)
         rq.urlretrieve(URL, TAR_PATH)
-        print('Receiving database from source URL...')
+        print('Receiving database from source URL...', flush=True)
 
     # Extract the database from the tarball
     DB_FILE = DB_NAME + '.h5'
@@ -108,10 +108,10 @@ def main():
 
     # Extract the database
     if not path.isfile(DB_PATH):
-        print('Extracting tarball...')
+        print('Extracting tarball...', flush=True)
         tar = tarfile.open(TAR_PATH, 'r:gz')
         tar.extract(DB_FILE)
-        print('Extracted {}'.format(DB_PATH))
+        print('Extracted {}'.format(DB_PATH), flush=True)
 
     # # Load the database
     # df = load_dataset(DB_PATH)
@@ -143,15 +143,15 @@ def main():
     # svr_rbf.compute(DB_NAME, n_iter=50, rounding=np.rint, seed=RAND)
     # xgb.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
     # xgbrf.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
-    # # rnd_for.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
-    # # grd_boost.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
+    rnd_for.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
+    grd_boost.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
     # sequential_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
     # functional_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
     # functional_matrix_pca.compute(DB_NAME, rounding=np.rint, seed=RAND)
     # functional_matrix_pca_dense.compute(DB_NAME, rounding=np.rint, seed=RAND)
 
     # # Stack the algorithms
-    stacking.compute(DB_NAME, n_iter=50, seed=RAND)
+    # stacking.compute(DB_NAME, n_iter=50, seed=RAND)
 
 if __name__ == '__main__':
     main()

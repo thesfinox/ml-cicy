@@ -35,9 +35,9 @@ def save_fig(name, tight_layout=True, extension='png', resolution=600):
     if tight_layout:
         plt.tight_layout()
 
-    print('    Saving {}...'.format(filename))
+    print('    Saving {}...'.format(filename), flush=True)
     plt.savefig(filename, format=extension, dpi=resolution)
-    print('    Saved {}!'.format(filename))
+    print('    Saved {}!'.format(filename), flush=True)
 
 # Get a generator to count the occurrencies
 def get_counts(df, label, feature):

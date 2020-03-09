@@ -189,14 +189,14 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                      use_best_estimator=True,
                      rounding=rounding)
 
-    print('Fitting the matrix baseline on h_21...', flush=True)
-    grd_boost_h21.fit(df_matrix_train, h21_labels_train)
-    gridcv_score(grd_boost_h21, rounding=rounding)
-    prediction_score(grd_boost_h21,
-                     df_matrix_test,
-                     h21_labels_test,
-                     use_best_estimator=True,
-                     rounding=rounding)
+    # print('Fitting the matrix baseline on h_21...', flush=True)
+    # grd_boost_h21.fit(df_matrix_train, h21_labels_train)
+    # gridcv_score(grd_boost_h21, rounding=rounding)
+    # prediction_score(grd_boost_h21,
+    #                  df_matrix_test,
+    #                  h21_labels_test,
+    #                  use_best_estimator=True,
+    #                  rounding=rounding)
 
     print('Plotting error differences...', flush=True)
     fig, plot = plt.subplots(figsize=(6, 5))
@@ -209,13 +209,13 @@ def compute(df_name, n_iter=30, rounding=np.floor, seed=42):
                title='Error distribution on the test set',
                xlabel='Difference from real value',
                legend='$h_{11}$')
-    count_plot(plot,
-               error_diff(h21_labels_test,
-                          grd_boost_h21.best_estimator_.predict(df_matrix_test),
-                          rounding=rounding),
-               title='Error distribution on the test set',
-               xlabel='Difference from real value',
-               legend='$h_{21}$')
+    # count_plot(plot,
+    #            error_diff(h21_labels_test,
+    #                       grd_boost_h21.best_estimator_.predict(df_matrix_test),
+    #                       rounding=rounding),
+    #            title='Error distribution on the test set',
+    #            xlabel='Difference from real value',
+    #            legend='$h_{21}$')
 
     save_fig('grd_boost_error_matrix')
     # plt.show()

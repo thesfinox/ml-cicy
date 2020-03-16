@@ -1,11 +1,19 @@
 For the first analysis, we considered the original dataset located at \url{http://www.lpthe.jussieu.fr/~erbin/files/data/cicy3o_data.tar.gz}: the file was last downloaded on February, 24th 2020 and never directly modified. Before moving to the application of machine learning algorithms and neural networks, we first visualised and analysed the available data in order to extract usable features and gain some insights to be used in the following analysis.
 
-In what follows we use \textit{Scikit-learn} (v.\ 0.22.1), \textit{XGBoost} (v.\ 0.90) and \textit{Keras} (v.\ 2.3.1, with \textit{Tensorflow} v.\ 2.0.0 backend) as reference libraries in a \textit{Conda} installation on \textit{Arch Linux}. Hardware specifications are as follow:
+In what follows we use \textit{Scikit-learn} (v.\ 0.22.1), \textit{XGBoost} (v.\ 0.90) and \textit{Keras} (v.\ 2.3.1, with \textit{Tensorflow} v.\ 2.0.0 backend) as reference libraries in a \textit{Conda} installation. Hardware specifications are as follow:
 \begin{itemize}
+    \item OS: Arch Linux
     \item CPU: Intel Core i7-7700HQ @ 2.80 GHz,
     \item GPU: NVIDIA GeForce 940 MX (2 GB RAM),
-    \item RAM: 16 GB.
+    \item RAM: 16 GB
 \end{itemize}
+for the neural network analysis and the stacking ensemble learning, and
+\begin{itemize}
+    \item OS: Ubuntu 18.04.04 LTS
+    \item CPU: Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz
+    \item RAM: 16 GB
+\end{itemize}
+for the other analysis which require only CPU computations.
 
 \subsection{Data Visualisation}
 

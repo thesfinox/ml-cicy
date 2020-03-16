@@ -13,7 +13,7 @@ for the neural network analysis and the stacking ensemble learning, and
     \item CPU: Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz
     \item RAM: 16 GB
 \end{itemize}
-for the other analysis which require only CPU computations.
+for the other analysis which require only CPU computations. We also fix the random seed using both \textit{Numpy}'s \texttt{random.seed} method and \textit{Tensorflow}'s \texttt{random.set\_seed} method: we choose $42$ as fixed random state.
 
 \subsection{Data Visualisation}
 
@@ -49,7 +49,7 @@ for the other analysis which require only CPU computations.
     
 \subsection{Clustering and PCA}
 
-    To improve the predictive abilities of the algorithms, we employ a clustering analysis (unsupervised) on the components of the configuration matrix in the hope to find possible associations amongst the entries of the dataset. Since we are not interested in predictions, we use the entire dataset and consider the assigned labels as a new feature for the dataset. In particular we considered K-Means clustering using the \texttt{KMeans} algorithm (\texttt{random\_state} = 42). We ran the algorithm several times in a range of clusters between 2 and 19 and added the labels to the dataset to be later analysed.
+    To improve the predictive abilities of the algorithms, we employ a clustering analysis (unsupervised) on the components of the configuration matrix in the hope to find possible associations amongst the entries of the dataset. Since we are not interested in predictions, we use the entire dataset and consider the assigned labels as a new feature for the dataset. In particular we considered K-Means clustering using the \texttt{KMeans} algorithm. We ran the algorithm several times in a range of clusters between 2 and 19 and added the labels to the dataset to be later analysed.
     
     \begin{figure}[!t]
         \centering
@@ -58,17 +58,11 @@ for the other analysis which require only CPU computations.
         \label{fig:pca_analysis}
     \end{figure}
     
-    We then moved to the Principal Components Analysis (unsupervised) of the components of the configuration matrix using the algorithm \texttt{PCA} (\texttt{random\_state} = 42). We first considered the case of only 2 principal components to be used in plots but not in the real analysis. We show in Figure~\ref{fig:pca_analysis} the distribution of $h_{11}$ and $h_{21}$ with respect to such components. For the analysis we focused on keeping the 99\% of the total variance which, from a $12 \times 15$ (180 entries) matrix, led to a vector of 81 components.
+    We then moved to the Principal Components Analysis (unsupervised) of the components of the configuration matrix using the algorithm \texttt{PCA}. We first considered the case of only 2 principal components to be used in plots but not in the real analysis. We show in Figure~\ref{fig:pca_analysis} the distribution of $h_{11}$ and $h_{21}$ with respect to such components. For the analysis we focused on keeping the 99\% of the total variance which, from a $12 \times 15$ (180 entries) matrix, led to a vector of 81 components.
     
 \subsection{Feature Importances}
 
-    Using the engineered features (including clustering and PCA), we then train a \texttt{RandomForestRegressor}, using the \textit{Scikit-learn} implementation, on the entire dataset (we are still not interested in making predictions) to measure the variable ranking for the different features. The algorithms does not need to be fine tuned at this level of the analysis. We therefore considered the following hyperparameter space\footnote{Here as in the following, hyperparameter which are not explicitely specified are to be considered at their defaults.}:
-    \begin{itemize}
-        \item \texttt{criterion}: \textit{mse},
-        \item \texttt{n\_estimators}: 48,
-        \item \texttt{random\_state}: 42.
-    \end{itemize}
-    Even though it is not relevant for the analysis for many reasons (one above all, it was not computed on a separate training set from which to validate the results before making prediction), the accuracy for $h_{11}$ resulted to be $90.74\%$ and $59.00\%$ for $h_{21}$.
+    Using the engineered features (including clustering and PCA), we then train a \texttt{RandomForestRegressor}, using the \textit{Scikit-learn} implementation, on the entire dataset (we are still not interested in making predictions) to measure the variable ranking for the different features. The algorithms does not need to be fine tuned at this level of the analysis. We therefore considered the hyperparameter space\footnote{Here as in the following, hyperparameter which are not explicitely specified are to be considered at their defaults.} given by \texttt{criterion = mse}, and \texttt{n\_estimators = 48}. Even though it is not relevant for the analysis for many reasons (one above all, it was not computed on a separate training set from which to validate the results before making prediction), the accuracy for $h_{11}$ resulted to be $90.74\%$ and $59.00\%$ for $h_{21}$.
     
     \begin{figure}[!t]
         \centering

@@ -43,7 +43,8 @@ else:
 
 # Define a Sequential Keras model
 def build_cnn_sequential(conv2d_layers,
-                         activation='relu',
+                         conv_activation='relu',
+                         dense_activation='relu',
                          kernel_size=3,
                          max_pool=2,
                          dropout=0.4,
@@ -68,12 +69,14 @@ def build_cnn_sequential(conv2d_layers,
                          kernel_regularizer=reg
                         )
                  )
-        if activation == 'relu':                   # add their activation
+        if conv_activation == 'relu':                   # add their activation
             model.add(Activation('relu'))
+        elif conv_activation > 0.0:
+            model.add(LeakyReLU(alpha=conv_activation))
         else:
-            model.add(LeakyReLU(alpha=activation))
+            pass
             
-        if max_pool > 0:                           # reduce feature space if needed
+        if max_pool is not None:                # reduce feature space if needed
             model.add(MaxPool2D(pool_size=max_pool,
                                 padding='same'
                                )
@@ -89,10 +92,12 @@ def build_cnn_sequential(conv2d_layers,
     
     if dense > 0:                                  # add dense layer (if requested)
         model.add(Dense(units=dense, kernel_regularizer=reg))
-        if activation == 'relu':                   # add their activation
+        if dense_activation == 'relu':                   # add their activation
             model.add(Activation('relu'))
+        elif dense_activation > 0.0:
+            model.add(LeakyReLU(alpha=dense_activation))
         else:
-            model.add(LeakyReLU(alpha=activation))
+            pass
         
         if batch_normalization:                    # works best with batch_normalization
             model.add(BatchNormalization())
@@ -193,7 +198,10 @@ def build_conv_model(num_cp_dense_layers=(None,None),
         dim_cp_layer_h21 = Dropout(rate=dropout[1])(dim_cp_layer_h21)
             
     dim_cp_layer_h11 = Flatten()(dim_cp_layer_h11)
+    # dim_cp_layer_h11 = Dense(20)(dim_cp_layer_h11)
+
     dim_cp_layer_h21 = Flatten()(dim_cp_layer_h21)
+    # dim_cp_layer_h21 = Dense(20)(dim_cp_layer_h21)
     
     # connections for dim_h0_amb
     dim_h0_layer_in = Input(shape=(15,1), name='dim_h0_amb')
@@ -235,7 +243,10 @@ def build_conv_model(num_cp_dense_layers=(None,None),
         dim_h0_layer_h21 = Dropout(rate=dropout[1])(dim_h0_layer_h21)
             
     dim_h0_layer_h11 = Flatten()(dim_h0_layer_h11)
+    # dim_h0_layer_h11 = Dense(50)(dim_h0_layer_h11)
+
     dim_h0_layer_h21 = Flatten()(dim_h0_layer_h21)
+    # dim_h0_layer_h21 = Dense(50)(dim_h0_layer_h21)
     
     # connections for matrix
     matrix_layer_in = Input(shape=(12,15,1), name='matrix')
@@ -277,19 +288,21 @@ def build_conv_model(num_cp_dense_layers=(None,None),
         matrix_layer_h21 = Dropout(rate=dropout[1])(matrix_layer_h21)
             
     matrix_layer_h11 = Flatten()(matrix_layer_h11)
+    # matrix_layer_h11 = Dense(800)(matrix_layer_h11)
+
     matrix_layer_h21 = Flatten()(matrix_layer_h21)
+    # matrix_layer_h11 = Dense(800)(matrix_layer_h11)
             
     # outputs
     
-    h11 = concatenate([num_cp_layer_h11,
-                       dim_cp_layer_h11,
-                       matrix_layer_h11])
+    h11_layers = [num_cp_layer_h11, dim_cp_layer_h11, matrix_layer_h11]
+    h11 = concatenate(h11_layers)
+    h11 = Dense(10)(h11)
     h11 = Dense(1, name='h_11')(h11)
     
     intermediate = Lambda(lambda x: x)(h11) # return correlation instead of anti-correlation
     intermediate = concatenate([intermediate,
-                                dim_cp_layer_h21,
-                                dim_h0_layer_h21])
+                                dim_cp_layer_h21])
     if len(dense) > 0:
         for n in range(len(dense)):
             intermediate = Dense(dense[n])(intermediate)
@@ -298,11 +311,10 @@ def build_conv_model(num_cp_dense_layers=(None,None),
             else:
                 intermediate = LeakyReLU(alpha=activation)(intermediate)
     
-    h21 = concatenate([num_cp_layer_h21,
-                       dim_cp_layer_h21,
-                       dim_h0_layer_h21,
-                       matrix_layer_h21,
-                       intermediate])
+    h21_layers = [num_cp_layer_h21, dim_cp_layer_h21, dim_h0_layer_h21,
+                  matrix_layer_h21, intermediate]
+    h21 = concatenate(h21_layers)
+    h21 = Dense(10)(h21)
     h21 = Dense(1, name='h_21')(h21)
             
     model = Model(inputs=[num_cp_layer_in,

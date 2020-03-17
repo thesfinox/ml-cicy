@@ -119,12 +119,13 @@ def compute(df_name, rounding=np.floor, seed=42):
 
     # Compile and fit the model for h_11:
     cnn_h11_params = {'conv2d_layers':       [ 80, 40, 20 ],
-                      'activation':          'relu',
+                      'conv_activation':     'relu',
+                      'dense_activation':    'relu',
                       'kernel_size':         5,
-                      'max_pool':            False,
+                      'max_pool':            None,
                       'dropout':             0.2,
                       'batch_normalization': True,
-                      'dense':               20,
+                      'dense':               800,
                       'out_activation':      True,
                       'l1_regularization':   1e-5,
                       'l2_regularization':   0.0
@@ -247,12 +248,13 @@ def compute(df_name, rounding=np.floor, seed=42):
 
     # Compile and fit the model for h_21:
     cnn_h21_params = {'conv2d_layers':       [ 180, 150, 150, 100, 50, 20 ],
-                      'activation':          'relu',
+                      'conv_activation':     'relu',
+                      'dense_activation':    'relu',
                       'kernel_size':         6,
-                      'max_pool':            False,
+                      'max_pool':            None,
                       'dropout':             0.4,
                       'batch_normalization': True,
-                      'dense':               20,
+                      'dense':               30,
                       'out_activation':      True,
                       'l1_regularization':   0.0,
                       'l2_regularization':   0.0
@@ -281,24 +283,24 @@ def compute(df_name, rounding=np.floor, seed=42):
     # Create callbacks
     callbacks_h21 = [EarlyStopping(monitor='val_mean_squared_error',
                                    patience=50,
-                                   verbose=0),
+                                   verbose=1),
                      ReduceLROnPlateau(monitor='val_mean_squared_error',
                                        factor=0.3,
                                        patience=30,
-                                       verbose=0),
+                                       verbose=1),
                      ModelCheckpoint(path.join(MOD_PATH,
                                                'cnn_matrix_sequential_h21.h5'),
                                      monitor='val_mean_squared_error',
                                      save_best_only=True,
-                                     verbose=0)
+                                     verbose=1)
                     ]
 
     # Fit the model
     model_h21_history = model_h21_cnn.fit(x=df_matrix_nn_train,
                                           y=h21_labels_nn_train,
-                                          batch_size=64,
+                                          batch_size=32,
                                           epochs=1000,
-                                          verbose=0,
+                                          verbose=1,
                                           callbacks=callbacks_h21,
                                           validation_data=(df_matrix_nn_val,
                                                            h21_labels_nn_val)

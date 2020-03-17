@@ -209,21 +209,22 @@ def compute(df_name, rounding=np.floor, seed=42):
     dim_h0_amb_input_test_conv  = K.reshape(df_eng_h21_nn_test[:,13:28], (-1,15,1))
 
     # build the model
-    model_cnn = build_conv_model(num_cp_dense_layers=([10],
-                                                      [10, 10]),
-                                 dim_cp_conv1d_layers=([10],
-                                                       [10, 10, 5]),
+    model_cnn = build_conv_model(num_cp_dense_layers=([],
+                                                      []),
+                                 dim_cp_conv1d_layers=([],
+                                                       []),
                                  dim_h0_amb_conv1d_layers=([], # not connected
-                                                           [15, 10, 10, 5]),
+                                                           [20, 10]),
                                  matrix_conv2d_layers=([80, 40, 20],
                                                        [180, 150, 150, 100, 50, 20]),
                                  activation='relu',
+                                 # activation=0.3,
                                  kernel_size=(2,2),
                                  matrix_kernel_size=(5,6),
                                  max_pool=(0,0),
                                  dropout=(0.2,0.4),
                                  batch_normalization=True,
-                                 dense=[10, 5, 5],
+                                 dense=[20, 10],
                                  out_activation=True,
                                  l1_regularization=(0.0,0.0),
                                  l2_regularization=(0.0,0.0)

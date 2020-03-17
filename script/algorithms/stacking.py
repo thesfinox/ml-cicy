@@ -28,6 +28,7 @@ from sklearn.model_selection       import train_test_split, \
                                           cross_val_predict, \
                                           KFold, \
                                           GridSearchCV, \
+                                          RandomizedSearchCV, \
                                           KFold
 from sklearn.linear_model          import LinearRegression, \
                                           Lasso, \
@@ -79,13 +80,15 @@ def meta_nn(layers,
 
     # buld the model
     model = Sequential()
-    model.add(Input(shape=(12,1)))
+    model.add(Input(shape=(9)))
+    # model.add(Input(shape=(9,1)))
     
     for n in range(len(layers)):
-        model.add(Conv1D(filters=layers[n],
-                         kernel_size=kernel_size,
-                         padding='valid',
-                         kernel_regularizer=reg))
+        # model.add(Conv1D(filters=layers[n],
+        #                  kernel_size=kernel_size,
+        #                  padding='valid',
+        #                  kernel_regularizer=reg))
+        model.add(Dense(layers[n], kernel_regularizer=reg))
         if activation == 'relu':
             model.add(Activation('relu'))
         else:
@@ -97,7 +100,7 @@ def meta_nn(layers,
     if dropout > 0.0:
         model.add(Dropout(rate=dropout))
 
-    model.add(Flatten())
+    # model.add(Flatten())
 
     if dense > 0:
         model.add(Dense(units=dense, kernel_regularizer=reg))
@@ -109,7 +112,7 @@ def meta_nn(layers,
         if batch_normalization:
             model.add(BatchNormalization())
 
-    mode.add(Dense(1))
+    model.add(Dense(1))
 
     return model
     
@@ -342,42 +345,42 @@ def compute(df_name, n_iter=30, seed=42):
                               verbose=0
                              )
 
-    print('    Define GradientBoostingRegressor...', flush=True)
-    search_params = {'learning_rate':     Real(1e-5, 1e-1,
-                                               base=10,
-                                               prior='log-uniform'),
-                     'n_estimators':      Integer(100, 300,
-                                                  prior='uniform'),
-                     'subsample':         Real(0.6, 1.0,
-                                               prior='uniform'),
-                     'min_samples_split': Integer(2, 10,
-                                                  prior='uniform'),
-                     'max_depth':         Integer(2, 20,
-                                          prior='uniform')
-                    }
+    # print('    Define GradientBoostingRegressor...', flush=True)
+    # search_params = {'learning_rate':     Real(1e-5, 1e-1,
+    #                                            base=10,
+    #                                            prior='log-uniform'),
+    #                  'n_estimators':      Integer(100, 300,
+    #                                               prior='uniform'),
+    #                  'subsample':         Real(0.6, 1.0,
+    #                                            prior='uniform'),
+    #                  'min_samples_split': Integer(2, 10,
+    #                                               prior='uniform'),
+    #                  'max_depth':         Integer(2, 20,
+    #                                       prior='uniform')
+    #                 }
 
-    grd_boost_h11 = BayesSearchCV(estimator=GradientBoostingRegressor(\
-                                                    random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=int(n_iter/5),
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
-    grd_boost_h21 = BayesSearchCV(estimator=GradientBoostingRegressor(\
-                                                    random_state=RAND),
-                              search_spaces=search_params,
-                              n_iter=int(n_iter/5),
-                              scoring=make_scorer(accuracy_score,
-                                                  greater_is_better=True,
-                                                  rounding=np.floor),
-                              cv=cv,
-                              n_jobs=-1,
-                              verbose=0
-                             )
+    # grd_boost_h11 = BayesSearchCV(estimator=GradientBoostingRegressor(\
+    #                                                 random_state=RAND),
+    #                           search_spaces=search_params,
+    #                           n_iter=int(n_iter/5),
+    #                           scoring=make_scorer(accuracy_score,
+    #                                               greater_is_better=True,
+    #                                               rounding=np.floor),
+    #                           cv=cv,
+    #                           n_jobs=-1,
+    #                           verbose=0
+    #                          )
+    # grd_boost_h21 = BayesSearchCV(estimator=GradientBoostingRegressor(\
+    #                                                 random_state=RAND),
+    #                           search_spaces=search_params,
+    #                           n_iter=int(n_iter/5),
+    #                           scoring=make_scorer(accuracy_score,
+    #                                               greater_is_better=True,
+    #                                               rounding=np.floor),
+    #                           cv=cv,
+    #                           n_jobs=-1,
+    #                           verbose=0
+    #                          )
 
     print('    Define RandomForestRegressor...', flush=True)
     search_params = {'n_estimators':      Integer(2, 75,
@@ -413,19 +416,33 @@ def compute(df_name, n_iter=30, seed=42):
                                      )
 
     print('    Define the Sequential Keras model...', flush=True)
-    seq_h11     = load_model(path.join(MOD_PATH,
-                                       'cnn_matrix_sequential_h11.h5'))
-    seq_h21     = load_model(path.join(MOD_PATH, 'cnn_matrix_sequential_h21.h5'))
+    seq_h11 = load_model(path.join(MOD_PATH, 'cnn_matrix_sequential_h11.h5'))
+    seq_h11.compile(optimizer=Adam(learning_rate=0.001),
+                    loss=keras.losses.MeanSquaredError(),
+                    metrics=[keras.metrics.MeanSquaredError()])
+
+    seq_h21 = load_model(path.join(MOD_PATH, 'cnn_matrix_sequential_h21.h5'))
+    seq_h21.compile(optimizer=Adam(learning_rate=0.001),
+                    loss=keras.losses.MeanSquaredError(),
+                    metrics=[keras.metrics.MeanSquaredError()])
 
     print('    Define the Functional Keras model...', flush=True)
-    matrix_functional           = load_model(path.join(MOD_PATH,
-                                                       'cnn_functional.h5'))
-    print('    Define the Functional Keras model with PCA...', flush=True)
-    matrix_functional_pca       = load_model(path.join(MOD_PATH,
-                                                       'cnn_functional_pca.h5'))
-    print('    Define the Functional Keras model with PCA and Dense layers...', flush=True)
-    matrix_functional_pca_dense = load_model(path.join(MOD_PATH,
-                                                       'cnn_functional_pca_dense.h5'))
+    matrix_functional = load_model(path.join(MOD_PATH, 'cnn_functional.h5'))
+    matrix_functional.compile(optimizer=Adam(learning_rate=0.001),
+                              loss=keras.losses.MeanSquaredError(),
+                              metrics=[keras.metrics.MeanSquaredError()])
+    # print('    Define the Functional Keras model with PCA...', flush=True)
+    # matrix_functional_pca       = load_model(path.join(MOD_PATH,
+    #                                                    'cnn_functional_pca.h5'))
+    # matrix_functional_pca.compile(optimizer=Adam(learning_rate=0.001),
+    #                               loss=keras.losses.MeanSquaredError(),
+    #                               metrics=[keras.metrics.MeanSquaredError()])
+    # print('    Define the Functional Keras model with PCA and Dense layers...', flush=True)
+    # matrix_functional_pca_dense = load_model(path.join(MOD_PATH,
+    #                                                    'cnn_functional_pca_dense.h5'))
+    # matrix_functional_pca_dense.compile(optimizer=Adam(learning_rate=0.001),
+    #                                     loss=keras.losses.MeanSquaredError(),
+    #                                     metrics=[keras.metrics.MeanSquaredError()])
 
 
     # Load database
@@ -520,11 +537,11 @@ def compute(df_name, n_iter=30, seed=42):
     svr_rbf_h11 = svr_rbf_h11.best_estimator_
     svr_rbf_h21 = svr_rbf_h21.best_estimator_
 
-    print('    Fitting the GradientBoostingRegressor...', flush=True)
-    grd_boost_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
-    grd_boost_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
-    grd_boost_h11 = grd_boost_h11.best_estimator_
-    grd_boost_h21 = grd_boost_h21.best_estimator_
+    # print('    Fitting the GradientBoostingRegressor...', flush=True)
+    # grd_boost_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
+    # grd_boost_h21.fit(df_eng_h21_train, df_labels_train['h21'].values)
+    # grd_boost_h11 = grd_boost_h11.best_estimator_
+    # grd_boost_h21 = grd_boost_h21.best_estimator_
 
     print('    Fitting the RandomForestRegressor...', flush=True)
     rnd_for_h11.fit(df_eng_h11_train, df_labels_train['h11'].values)
@@ -533,26 +550,68 @@ def compute(df_name, n_iter=30, seed=42):
     rnd_for_h21 = rnd_for_h21.best_estimator_
 
     print('    Fitting the Sequential Keras models...', flush=True)
+    callbacks_stack_h11 = [EarlyStopping(monitor='val_mean_squared_error',
+                                         patience=50,
+                                         verbose=1),
+                           ReduceLROnPlateau(monitor='val_mean_squared_error',
+                                             factor=0.3,
+                                             patience=30,
+                                             verbose=1),
+                           ModelCheckpoint(path.join(MOD_PATH,
+                                            'cnn_stack_matrix_sequential_h11.h5'),
+                                           monitor='val_mean_squared_error',
+                                           save_best_only=True,
+                                          verbose=1)
+                          ]
     seq_h11.fit(x=K.cast(df_matrix_train.reshape(-1,12,15,1), dtype='float64'),
                 y=K.cast(df_labels_train['h11'], dtype='float64'),
-                validation_split=0.2,
-                batch_size=32,
+                validation_split=0.1,
+                batch_size=16,
+                callbacks=callbacks_stack_h11,
                 epochs=300,
                 verbose=1
                )
+
+    callbacks_stack_h21 = [EarlyStopping(monitor='val_mean_squared_error',
+                                         patience=50,
+                                         verbose=1),
+                           ReduceLROnPlateau(monitor='val_mean_squared_error',
+                                             factor=0.3,
+                                             patience=30,
+                                             verbose=1),
+                           ModelCheckpoint(path.join(MOD_PATH,
+                                            'cnn_stack_matrix_sequential_h21.h5'),
+                                           monitor='val_mean_squared_error',
+                                           save_best_only=True,
+                                          verbose=1)
+                          ]
     seq_h21.fit(x=K.cast(df_matrix_train.reshape(-1,12,15,1), dtype='float64'),
                 y=K.cast(df_labels_train['h21'], dtype='float64'),
-                validation_split=0.2,
+                validation_split=0.1,
                 batch_size=32,
+                callbacks=callbacks_stack_h21,
                 epochs=300,
                 verbose=1
                )
-    seq_h11 = load_model(path.join(MOD_PATH, 'cnn_matrix_sequential_h11.h5'))
-    seq_h21 = load_model(path.join(MOD_PATH, 'cnn_matrix_sequential_h21.h5'))
+    seq_h11 = load_model(path.join(MOD_PATH, 'cnn_stack_matrix_sequential_h11.h5'))
+    seq_h21 = load_model(path.join(MOD_PATH, 'cnn_stack_matrix_sequential_h21.h5'))
 
     K.clear_session()
 
     print('    Fitting the Functional Conv2D Keras models...', flush=True)
+    callbacks_stack_func = [EarlyStopping(monitor='val_loss',
+                                          patience=50,
+                                          verbose=1),
+                            ReduceLROnPlateau(monitor='val_loss',
+                                              factor=0.3,
+                                              patience=30,
+                                              verbose=1),
+                            ModelCheckpoint(path.join(MOD_PATH,
+                                             'cnn_stack_matrix_functional.h5'),
+                                            monitor='val_loss',
+                                            save_best_only=True,
+                                           verbose=1)
+                           ]
     matrix_functional.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1),
                                     dtype='float64'),
                              K.cast(df_eng_h21_train[:,1:13].reshape(-1,12,1),
@@ -563,57 +622,58 @@ def compute(df_name, n_iter=30, seed=42):
                                     dtype='float64')],
                           y=[K.cast(df_labels_train['h11'], dtype='float64'),
                              K.cast(df_labels_train['h21'], dtype='float64')],
-                          validation_split=0.2,
-                          batch_size=32,
+                          validation_split=0.1,
+                          batch_size=64,
+                          callbacks=callbacks_stack_func,
                           epochs=300,
                           verbose=1
                          )
-    matrix_functional = load_model(path.join(MOD_PATH, 'cnn_functional.h5'))
+    matrix_functional = load_model(path.join(MOD_PATH, 'cnn_stack_matrix_functional.h5'))
 
     K.clear_session()
 
-    print('    Fitting the Functional Conv1D Keras models...', flush=True)
-    matrix_functional_pca.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1),
-                                        dtype='float64'),
-                                 K.cast(df_eng_h21_train[:,1:13].reshape(-1,12,1),
-                                        dtype='float64'),
-                                 K.cast(df_eng_h21_train[:,13:28].reshape(-1,15,1),
-                                        dtype='float64'),
-                                 K.cast(df_eng_h21_train[:,28:].reshape(-1,81,1),
-                                        dtype='float64')],
-                              y=[K.cast(df_labels_train['h11'], dtype='float64'),
-                                 K.cast(df_labels_train['h21'], dtype='float64')],
-                              validation_split=0.2,
-                              batch_size=32,
-                              epochs=300,
-                              verbose=1
-                             )
-    matrix_functional_pca = load_model(path.join(MOD_PATH, 'cnn_functional_pca.h5'))
+    # print('    Fitting the Functional Conv1D Keras models...', flush=True)
+    # matrix_functional_pca.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1),
+    #                                     dtype='float64'),
+    #                              K.cast(df_eng_h21_train[:,1:13].reshape(-1,12,1),
+    #                                     dtype='float64'),
+    #                              K.cast(df_eng_h21_train[:,13:28].reshape(-1,15,1),
+    #                                     dtype='float64'),
+    #                              K.cast(df_eng_h21_train[:,28:].reshape(-1,81,1),
+    #                                     dtype='float64')],
+    #                           y=[K.cast(df_labels_train['h11'], dtype='float64'),
+    #                              K.cast(df_labels_train['h21'], dtype='float64')],
+    #                           validation_split=0.1,
+    #                           batch_size=32,
+    #                           epochs=300,
+    #                           verbose=1
+    #                          )
+    # matrix_functional_pca = load_model(path.join(MOD_PATH, 'cnn_functional_pca.h5'))
 
-    K.clear_session()
+    # K.clear_session()
 
-    print('    Fitting the Functional Dense Keras models...', flush=True)
-    matrix_functional_pca_dense.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1), 
-                                              dtype='float64'),
-                                       K.cast(df_eng_h21_train[:,1:13],
-                                              dtype='float64'),
-                                       K.cast(df_eng_h21_train[:,13:28],
-                                              dtype='float64'),
-                                       K.cast(df_eng_h21_train[:,28:],
-                                              dtype='float64')],
-                                    y=[K.cast(df_labels_train['h11'],
-                                              dtype='float64'),
-                                       K.cast(df_labels_train['h21'],
-                                              dtype='float64')],
-                                    validation_split=0.2,
-                                    batch_size=32,
-                                    epochs=300,
-                                    verbose=1
-                                   )
-    matrix_functional_pca_dense = load_model(path.join(MOD_PATH,
-                                                'cnn_functional_pca_dense.h5'))
+    # print('    Fitting the Functional Dense Keras models...', flush=True)
+    # matrix_functional_pca_dense.fit(x=[K.cast(df_eng_h21_train[:,0].reshape(-1,1), 
+    #                                           dtype='float64'),
+    #                                    K.cast(df_eng_h21_train[:,1:13],
+    #                                           dtype='float64'),
+    #                                    K.cast(df_eng_h21_train[:,13:28],
+    #                                           dtype='float64'),
+    #                                    K.cast(df_eng_h21_train[:,28:],
+    #                                           dtype='float64')],
+    #                                 y=[K.cast(df_labels_train['h11'],
+    #                                           dtype='float64'),
+    #                                    K.cast(df_labels_train['h21'],
+    #                                           dtype='float64')],
+    #                                 validation_split=0.1,
+    #                                 batch_size=32,
+    #                                 epochs=300,
+    #                                 verbose=1
+    #                                )
+    # matrix_functional_pca_dense = load_model(path.join(MOD_PATH,
+    #                                             'cnn_functional_pca_dense.h5'))
 
-    K.clear_session()
+    # K.clear_session()
 
     print('End of the training procedure!', flush=True)
 
@@ -757,28 +817,28 @@ def compute(df_name, n_iter=30, seed=42):
                                    svr_rbf_h21_predictions_test,
                                    rounding=np.rint)*100))
 
-    print('Predictions of the GradientBoostingRegressor...', flush=True)
-    grd_boost_h11_predictions_val = grd_boost_h11.predict(df_eng_h11_val)
-    print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
-                    accuracy_score(df_labels_val['h11'].values,
-                                   grd_boost_h11_predictions_val,
-                                   rounding=np.floor)*100))
-    grd_boost_h21_predictions_val = grd_boost_h21.predict(df_eng_h21_val)
-    print('    Accuracy of the validation predictions for h_21: {:.3f}%'.format(\
-                    accuracy_score(df_labels_val['h21'].values,
-                                   grd_boost_h21_predictions_val,
-                                   rounding=np.floor)*100))
+    # print('Predictions of the GradientBoostingRegressor...', flush=True)
+    # grd_boost_h11_predictions_val = grd_boost_h11.predict(df_eng_h11_val)
+    # print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
+    #                 accuracy_score(df_labels_val['h11'].values,
+    #                                grd_boost_h11_predictions_val,
+    #                                rounding=np.floor)*100))
+    # grd_boost_h21_predictions_val = grd_boost_h21.predict(df_eng_h21_val)
+    # print('    Accuracy of the validation predictions for h_21: {:.3f}%'.format(\
+    #                 accuracy_score(df_labels_val['h21'].values,
+    #                                grd_boost_h21_predictions_val,
+    #                                rounding=np.floor)*100))
 
-    grd_boost_h11_predictions_test = grd_boost_h11.predict(df_eng_h11_test)
-    print('    Accuracy of the test predictions for h_11: {:.3f}%'.format(\
-                    accuracy_score(df_labels_test['h11'].values,
-                                   grd_boost_h11_predictions_test,
-                                   rounding=np.floor)*100))
-    grd_boost_h21_predictions_test = grd_boost_h21.predict(df_eng_h21_test)
-    print('    Accuracy of the test predictions for h_21: {:.3f}%'.format(\
-                    accuracy_score(df_labels_test['h21'].values,
-                                   grd_boost_h21_predictions_test,
-                                   rounding=np.floor)*100))
+    # grd_boost_h11_predictions_test = grd_boost_h11.predict(df_eng_h11_test)
+    # print('    Accuracy of the test predictions for h_11: {:.3f}%'.format(\
+    #                 accuracy_score(df_labels_test['h11'].values,
+    #                                grd_boost_h11_predictions_test,
+    #                                rounding=np.floor)*100))
+    # grd_boost_h21_predictions_test = grd_boost_h21.predict(df_eng_h21_test)
+    # print('    Accuracy of the test predictions for h_21: {:.3f}%'.format(\
+    #                 accuracy_score(df_labels_test['h21'].values,
+    #                                grd_boost_h21_predictions_test,
+    #                                rounding=np.floor)*100))
 
     print('Predictions of the RandomForestRegressor...', flush=True)
     rnd_for_h11_predictions_val = rnd_for_h11.predict(df_eng_h11_val)
@@ -864,80 +924,80 @@ def compute(df_name, n_iter=30, seed=42):
                                    matrix_functional_predictions_test[1],
                                    rounding=np.rint)*100))
 
-    print('Predictions of the Functional Conv1D Keras models...', flush=True)
-    matrix_functional_pca_predictions_val = \
-    matrix_functional_pca.predict([K.cast(df_eng_h21_val[:,0].reshape(-1,1),
-                                          dtype='float64'),
-                                   K.cast(df_eng_h21_val[:,1:13].reshape(-1,12,1),
-                                          dtype='float64'),
-                                   K.cast(df_eng_h21_val[:,13:28].reshape(-1,15,1),
-                                          dtype='float64'),
-                                   K.cast(df_eng_h21_val[:,28:].reshape(-1,81,1),
-                                          dtype='float64')])
-    print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
-                    accuracy_score(df_labels_val['h11'].values,
-                                   matrix_functional_pca_predictions_val[0],
-                                   rounding=np.rint)*100))
-    print('    Accuracy of the validation predictions for h_21: {:.3f}%'.format(\
-                    accuracy_score(df_labels_val['h21'].values,
-                                   matrix_functional_pca_predictions_val[1],
-                                   rounding=np.rint)*100))
+    # print('Predictions of the Functional Conv1D Keras models...', flush=True)
+    # matrix_functional_pca_predictions_val = \
+    # matrix_functional_pca.predict([K.cast(df_eng_h21_val[:,0].reshape(-1,1),
+    #                                       dtype='float64'),
+    #                                K.cast(df_eng_h21_val[:,1:13].reshape(-1,12,1),
+    #                                       dtype='float64'),
+    #                                K.cast(df_eng_h21_val[:,13:28].reshape(-1,15,1),
+    #                                       dtype='float64'),
+    #                                K.cast(df_eng_h21_val[:,28:].reshape(-1,81,1),
+    #                                       dtype='float64')])
+    # print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
+    #                 accuracy_score(df_labels_val['h11'].values,
+    #                                matrix_functional_pca_predictions_val[0],
+    #                                rounding=np.rint)*100))
+    # print('    Accuracy of the validation predictions for h_21: {:.3f}%'.format(\
+    #                 accuracy_score(df_labels_val['h21'].values,
+    #                                matrix_functional_pca_predictions_val[1],
+    #                                rounding=np.rint)*100))
 
-    matrix_functional_pca_predictions_test = \
-    matrix_functional_pca.predict([K.cast(df_eng_h21_test[:,0].reshape(-1,1),
-                                          dtype='float64'),
-                                   K.cast(df_eng_h21_test[:,1:13].reshape(-1,12,1),
-                                          dtype='float64'),
-                                   K.cast(df_eng_h21_test[:,13:28].reshape(-1,15,1),
-                                          dtype='float64'),
-                                   K.cast(df_eng_h21_test[:,28:].reshape(-1,81,1),
-                                          dtype='float64')])
-    print('    Accuracy of the test predictions for h_11: {:.3f}%'.format(\
-                    accuracy_score(df_labels_test['h11'].values,
-                                   matrix_functional_pca_predictions_test[0],
-                                   rounding=np.rint)*100))
-    print('    Accuracy of the test predictions for h_21: {:.3f}%'.format(\
-                    accuracy_score(df_labels_test['h21'].values,
-                                   matrix_functional_pca_predictions_test[1],
-                                   rounding=np.rint)*100))
+    # matrix_functional_pca_predictions_test = \
+    # matrix_functional_pca.predict([K.cast(df_eng_h21_test[:,0].reshape(-1,1),
+    #                                       dtype='float64'),
+    #                                K.cast(df_eng_h21_test[:,1:13].reshape(-1,12,1),
+    #                                       dtype='float64'),
+    #                                K.cast(df_eng_h21_test[:,13:28].reshape(-1,15,1),
+    #                                       dtype='float64'),
+    #                                K.cast(df_eng_h21_test[:,28:].reshape(-1,81,1),
+    #                                       dtype='float64')])
+    # print('    Accuracy of the test predictions for h_11: {:.3f}%'.format(\
+    #                 accuracy_score(df_labels_test['h11'].values,
+    #                                matrix_functional_pca_predictions_test[0],
+    #                                rounding=np.rint)*100))
+    # print('    Accuracy of the test predictions for h_21: {:.3f}%'.format(\
+    #                 accuracy_score(df_labels_test['h21'].values,
+    #                                matrix_functional_pca_predictions_test[1],
+    #                                rounding=np.rint)*100))
 
 
-    print('Predictions of the Functional Dense Keras models...', flush=True)
-    matrix_functional_pca_dense_predictions_val = \
-    matrix_functional_pca_dense.predict([K.cast(df_eng_h21_val[:,0].reshape(-1,1),
-                                                dtype='float64'),
-                                         K.cast(df_eng_h21_val[:,1:13],
-                                                dtype='float64'),
-                                         K.cast(df_eng_h21_val[:,13:28],
-                                                dtype='float64'),
-                                         K.cast(df_eng_h21_val[:,28:],
-                                                dtype='float64')])
-    print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
-                    accuracy_score(df_labels_val['h11'].values,
-                                   matrix_functional_pca_dense_predictions_val[0],
-                                   rounding=np.rint)*100))
-    print('    Accuracy of the validation predictions for h_21: {:.3f}%'.format(\
-                    accuracy_score(df_labels_val['h21'].values,
-                                   matrix_functional_pca_dense_predictions_val[1],
-                                   rounding=np.rint)*100))
+    # print('Predictions of the Functional Dense Keras models...', flush=True)
+    # matrix_functional_pca_dense_predictions_val = \
+    # matrix_functional_pca_dense.predict([K.cast(df_eng_h21_val[:,0].reshape(-1,1),
+    #                                             dtype='float64'),
+    #                                      K.cast(df_eng_h21_val[:,1:13],
+    #                                             dtype='float64'),
+    #                                      K.cast(df_eng_h21_val[:,13:28],
+    #                                             dtype='float64'),
+    #                                      K.cast(df_eng_h21_val[:,28:],
+    #                                             dtype='float64')])
+    # print('    Accuracy of the validation predictions for h_11: {:.3f}%'.format(\
+    #                 accuracy_score(df_labels_val['h11'].values,
+    #                                matrix_functional_pca_dense_predictions_val[0],
+    #                                rounding=np.rint)*100))
+    # print('    Accuracy of the validation predictions for h_21: {:.3f}%'.format(\
+    #                 accuracy_score(df_labels_val['h21'].values,
+    #                                matrix_functional_pca_dense_predictions_val[1],
+    #                                rounding=np.rint)*100))
 
-    matrix_functional_pca_dense_predictions_test = \
-    matrix_functional_pca_dense.predict([K.cast(df_eng_h21_test[:,0].reshape(-1,1),
-                                                dtype='float64'),
-                                         K.cast(df_eng_h21_test[:,1:13],
-                                                dtype='float64'),
-                                         K.cast(df_eng_h21_test[:,13:28],
-                                                dtype='float64'),
-                                         K.cast(df_eng_h21_test[:,28:],
-                                                dtype='float64')])
-    print('    Accuracy of the test predictions for h_11: {:.3f}%'.format(\
-                    accuracy_score(df_labels_test['h11'].values,
-                                   matrix_functional_pca_dense_predictions_test[0],
-                                   rounding=np.rint)*100))
-    print('    Accuracy of the test predictions for h_21: {:.3f}%'.format(\
-                    accuracy_score(df_labels_test['h21'].values,
-                                   matrix_functional_pca_dense_predictions_test[1],
-                                   rounding=np.rint)*100))
+    # matrix_functional_pca_dense_predictions_test = \
+    # matrix_functional_pca_dense.predict([K.cast(df_eng_h21_test[:,0].reshape(-1,1),
+    #                                             dtype='float64'),
+    #                                      K.cast(df_eng_h21_test[:,1:13],
+    #                                             dtype='float64'),
+    #                                      K.cast(df_eng_h21_test[:,13:28],
+    #                                             dtype='float64'),
+    #                                      K.cast(df_eng_h21_test[:,28:],
+    #                                             dtype='float64')])
+    # print('    Accuracy of the test predictions for h_11: {:.3f}%'.format(\
+    #                 accuracy_score(df_labels_test['h11'].values,
+    #                                matrix_functional_pca_dense_predictions_test[0],
+    #                                rounding=np.rint)*100))
+    # print('    Accuracy of the test predictions for h_21: {:.3f}%'.format(\
+    #                 accuracy_score(df_labels_test['h21'].values,
+    #                                matrix_functional_pca_dense_predictions_test[1],
+    #                                rounding=np.rint)*100))
 
     print('Concatenatig prediction vectors...', flush=True)
     h11_predictions_val = np.c_[lin_reg_h11_predictions_val,
@@ -946,12 +1006,12 @@ def compute(df_name, n_iter=30, seed=42):
                                 ridge_h11_predictions_val,
                                 lin_svr_h11_predictions_val,
                                 svr_rbf_h11_predictions_val,
-                                grd_boost_h11_predictions_val,
+                                # grd_boost_h11_predictions_val,
                                 rnd_for_h11_predictions_val,
                                 seq_h11_predictions_val,
                                 matrix_functional_predictions_val[0],
-                                matrix_functional_pca_predictions_val[0],
-                                matrix_functional_pca_dense_predictions_val[0]
+                                # matrix_functional_pca_predictions_val[0],
+                                # matrix_functional_pca_dense_predictions_val[0]
                                ]
     h21_predictions_val = np.c_[lin_reg_h11_predictions_val,
                                 lasso_h11_predictions_val,
@@ -959,12 +1019,12 @@ def compute(df_name, n_iter=30, seed=42):
                                 ridge_h11_predictions_val,
                                 lin_svr_h11_predictions_val,
                                 svr_rbf_h11_predictions_val,
-                                grd_boost_h11_predictions_val,
+                                # grd_boost_h11_predictions_val,
                                 rnd_for_h11_predictions_val,
                                 seq_h11_predictions_val,
                                 matrix_functional_predictions_val[1],
-                                matrix_functional_pca_predictions_val[1],
-                                matrix_functional_pca_dense_predictions_val[1]
+                                # matrix_functional_pca_predictions_val[1],
+                                # matrix_functional_pca_dense_predictions_val[1]
                                ]
 
     h11_predictions_test = np.c_[lin_reg_h11_predictions_test,
@@ -973,12 +1033,12 @@ def compute(df_name, n_iter=30, seed=42):
                                 ridge_h11_predictions_test,
                                 lin_svr_h11_predictions_test,
                                 svr_rbf_h11_predictions_test,
-                                grd_boost_h11_predictions_test,
+                                # grd_boost_h11_predictions_test,
                                 rnd_for_h11_predictions_test,
                                 seq_h11_predictions_test,
                                 matrix_functional_predictions_test[0],
-                                matrix_functional_pca_predictions_test[0],
-                                matrix_functional_pca_dense_predictions_test[0]
+                                # matrix_functional_pca_predictions_test[0],
+                                # matrix_functional_pca_dense_predictions_test[0]
                                ]
     h21_predictions_test = np.c_[lin_reg_h11_predictions_test,
                                 lasso_h11_predictions_test,
@@ -986,12 +1046,12 @@ def compute(df_name, n_iter=30, seed=42):
                                 ridge_h11_predictions_test,
                                 lin_svr_h11_predictions_test,
                                 svr_rbf_h11_predictions_test,
-                                grd_boost_h11_predictions_test,
+                                # grd_boost_h11_predictions_test,
                                 rnd_for_h11_predictions_test,
                                 seq_h11_predictions_test,
                                 matrix_functional_predictions_test[1],
-                                matrix_functional_pca_predictions_test[1],
-                                matrix_functional_pca_dense_predictions_test[1]
+                                # matrix_functional_pca_predictions_test[1],
+                                # matrix_functional_pca_dense_predictions_test[1]
                                ]
 
     print('End of the predictions!', flush=True)
@@ -1171,97 +1231,97 @@ def compute(df_name, n_iter=30, seed=42):
              rounding=rounding_rnd_for)
 
     # Use a neural network as meta learner for h_11
-    meta_nn_h11 = meta_nn(layers=[10, 5, 1],
-                          activation=0.3,
-                          kernel_size=3,
-                          dropout=0.2,
-                          batch_normalization=True,
-                          dense=0,
-                          l1_regularization=0.0,
-                          l2_regularization=0.0)                          
-    meta_nn_h11.summary()
-    meta_nn_h11.compile(optimizer=Adam(learning_rate=0.001),
-                        loss=keras.losses.MeanSquaredError(),
-                        metrics=[keras.metrics.MeanSquaredError()]
-                       )
-    callbacks_h11 = [EarlyStopping(monitor='val_mean_squared_error',
-                                   patience=50,
-                                   verbose=0),
-                     ReduceLROnPlateau(monitor='val_mean_squared_error',
-                                       factor=0.3,
-                                       patience=30,
-                                       verbose=0),
-                     ModelCheckpoint(path.join(MOD_PATH,
-                                               'cnn_meta_matrix_sequential_h11.h5'),
-                                     monitor='val_mean_squared_error',
-                                     save_best_only=True,
-                                    verbose=0)
-                    ]
+    # meta_nn_h11 = meta_nn(layers=[10, 5],
+    #                       activation=0.3,
+    #                       kernel_size=3,
+    #                       dropout=0.2,
+    #                       batch_normalization=True,
+    #                       dense=0,
+    #                       l1_regularization=0.0,
+    #                       l2_regularization=0.0)                          
+    # meta_nn_h11.summary()
+    # meta_nn_h11.compile(optimizer=Adam(learning_rate=0.001),
+    #                     loss=keras.losses.MeanSquaredError(),
+    #                     metrics=[keras.metrics.MeanSquaredError()]
+    #                    )
+    # callbacks_h11 = [EarlyStopping(monitor='val_mean_squared_error',
+    #                                patience=50,
+    #                                verbose=0),
+    #                  ReduceLROnPlateau(monitor='val_mean_squared_error',
+    #                                    factor=0.3,
+    #                                    patience=30,
+    #                                    verbose=0),
+    #                  ModelCheckpoint(path.join(MOD_PATH,
+    #                                            'cnn_meta_matrix_sequential_h11.h5'),
+    #                                  monitor='val_mean_squared_error',
+    #                                  save_best_only=True,
+    #                                 verbose=0)
+    #                 ]
 
-    print('\nFitting Neural Network for h_11...', flush=True)
-    meta_nn_h11.fit(x=K.cast(h11_predictions_val, dtype='float64'),
-                    y=K.cast(h11_labels_nn_train, dtype='float64'),
-                    batch_size=32,
-                    epochs=1000,
-                    verbose=1,
-                    callbacks=callbacks_h11,
-                    validation_split=0.1
-                   )
-    if path.isfile(path.join(MOD_PATH, 'cnn_meta_matrix_sequential_h11.h5')):
-        meta_nn_h11  = load_model(path.join(MOD_PATH,
-                                  'cnn_meta_matrix_sequential_h11.h5'))
-    else:
-        print('\nCannot load best model!', flush=True)
+    # print('\nFitting Neural Network for h_11...', flush=True)
+    # meta_nn_h11.fit(x=K.cast(h11_predictions_val, dtype='float64'),
+    #                 y=K.cast(df_labels_val['h11'].values, dtype='float64'),
+    #                 batch_size=32,
+    #                 epochs=1000,
+    #                 verbose=1,
+    #                 callbacks=callbacks_h11,
+    #                 validation_split=0.1
+    #                )
+    # if path.isfile(path.join(MOD_PATH, 'cnn_meta_matrix_sequential_h11.h5')):
+    #     meta_nn_h11  = load_model(path.join(MOD_PATH,
+    #                               'cnn_meta_matrix_sequential_h11.h5'))
+    # else:
+    #     print('\nCannot load best model!', flush=True)
 
-    prediction_score(meta_nn_h11,
-                     h11_predictions_test,
-                     h11_labels_nn_test,
-                     rounding=np.rint)
+    # prediction_score(meta_nn_h11,
+    #                  h11_predictions_test,
+    #                  df_labels_test['h11'].values,
+    #                  rounding=np.rint)
 
-    # Use a neural network as meta learner for h_21
-    meta_nn_h21 = meta_nn(layers=[10, 5, 1],
-                          activation=0.3,
-                          kernel_size=3,
-                          dropout=0.3,
-                          batch_normalization=True,
-                          dense=0,
-                          l1_regularization=0.0,
-                          l2_regularization=0.0)                          
-    meta_nn_h21.summary()
-    meta_nn_h21.compile(optimizer=Adam(learning_rate=0.001),
-                        loss=keras.losses.MeanSquaredError(),
-                        metrics=[keras.metrics.MeanSquaredError()]
-                       )
-    callbacks_h21 = [EarlyStopping(monitor='val_mean_squared_error',
-                                   patience=50,
-                                   verbose=0),
-                     ReduceLROnPlateau(monitor='val_mean_squared_error',
-                                       factor=0.3,
-                                       patience=30,
-                                       verbose=0),
-                     ModelCheckpoint(path.join(MOD_PATH,
-                                               'cnn_meta_matrix_sequential_h21.h5'),
-                                     monitor='val_mean_squared_error',
-                                     save_best_only=True,
-                                     verbose=0)
-                    ]
+    # # Use a neural network as meta learner for h_21
+    # meta_nn_h21 = meta_nn(layers=[10, 5],
+    #                       activation=0.3,
+    #                       kernel_size=3,
+    #                       dropout=0.3,
+    #                       batch_normalization=True,
+    #                       dense=0,
+    #                       l1_regularization=0.0,
+    #                       l2_regularization=0.0)                          
+    # meta_nn_h21.summary()
+    # meta_nn_h21.compile(optimizer=Adam(learning_rate=0.001),
+    #                     loss=keras.losses.MeanSquaredError(),
+    #                     metrics=[keras.metrics.MeanSquaredError()]
+    #                    )
+    # callbacks_h21 = [EarlyStopping(monitor='val_mean_squared_error',
+    #                                patience=50,
+    #                                verbose=0),
+    #                  ReduceLROnPlateau(monitor='val_mean_squared_error',
+    #                                    factor=0.3,
+    #                                    patience=30,
+    #                                    verbose=0),
+    #                  ModelCheckpoint(path.join(MOD_PATH,
+    #                                            'cnn_meta_matrix_sequential_h21.h5'),
+    #                                  monitor='val_mean_squared_error',
+    #                                  save_best_only=True,
+    #                                  verbose=0)
+    #                 ]
 
-    print('\nFitting Neural Network for h_21...', flush=True)
-    meta_nn_h21.fit(x=K.cast(h21_predictions_val, dtype='float64'),
-                    y=K.cast(h21_labels_nn_train, dtype='float64'),
-                    batch_size=32,
-                    epochs=1000,
-                    verbose=1,
-                    callbacks=callbacks_h21,
-                    validation_split=0.1
-                   )
-    if path.isfile(path.join(MOD_PATH, 'cnn_meta_matrix_sequential_h21.h5')):
-        meta_nn_h21  = load_model(path.join(MOD_PATH,
-                                  'cnn_meta_matrix_sequential_h21.h5'))
-    else:
-        print('\nCannot load best model!', flush=True)
+    # print('\nFitting Neural Network for h_21...', flush=True)
+    # meta_nn_h21.fit(x=K.cast(h21_predictions_val, dtype='float64'),
+    #                 y=K.cast(df_labels_val['h21'].values, dtype='float64'),
+    #                 batch_size=32,
+    #                 epochs=1000,
+    #                 verbose=1,
+    #                 callbacks=callbacks_h21,
+    #                 validation_split=0.1
+    #                )
+    # if path.isfile(path.join(MOD_PATH, 'cnn_meta_matrix_sequential_h21.h5')):
+    #     meta_nn_h21  = load_model(path.join(MOD_PATH,
+    #                               'cnn_meta_matrix_sequential_h21.h5'))
+    # else:
+    #     print('\nCannot load best model!', flush=True)
 
-    prediction_score(meta_nn_h21,
-                     h21_predictions_test,
-                     h21_labels_nn_test,
-                     rounding=np.rint)
+    # prediction_score(meta_nn_h21,
+    #                  h21_predictions_test,
+    #                  df_labels_test['h21'].values,
+    #                  rounding=np.rint)

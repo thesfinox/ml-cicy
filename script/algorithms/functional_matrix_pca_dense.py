@@ -218,9 +218,9 @@ def compute(df_name, rounding=np.floor, seed=42):
     matrix_pca_input_test_conv  = K.reshape(df_eng_h21_nn_test[:,28:], (-1,81,1))
 
     # Build, compile and fit the model:
-    model_cnn = build_dense_model(num_cp_dense_layers=([20, 10],
+    model_cnn = build_dense_model(num_cp_dense_layers=([],
                                                        [30, 20, 20]),
-                                  dim_cp_dense_layers=([50, 30, 20],
+                                  dim_cp_dense_layers=([],
                                                        [50, 50, 30, 20]),
                                   dim_h0_amb_dense_layers=([],
                                                            [100, 50, 30]),
@@ -229,7 +229,7 @@ def compute(df_name, rounding=np.floor, seed=42):
                                   activation='relu',
                                   dropout=(0.2,0.4),
                                   batch_normalization=True,
-                                  dense=[10, 10, 5],
+                                  dense=[1],
                                   out_activation=True,
                                   l1_regularization=(0.0,0.0),
                                   l2_regularization=(0.0,0.0)

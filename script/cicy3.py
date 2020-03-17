@@ -144,14 +144,14 @@ def main():
     # xgb.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
     # xgbrf.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
     # rnd_for.compute(DB_NAME, n_iter=15, rounding=np.floor, seed=RAND)
-    grd_boost.compute(DB_NAME, n_iter=10, rounding=np.floor, seed=RAND)
-    sequential_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
-    functional_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
-    functional_matrix_pca.compute(DB_NAME, rounding=np.rint, seed=RAND)
-    functional_matrix_pca_dense.compute(DB_NAME, rounding=np.rint, seed=RAND)
+    # grd_boost.compute(DB_NAME, n_iter=10, rounding=np.floor, seed=RAND)
+    # sequential_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
+    # functional_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
+    # functional_matrix_pca.compute(DB_NAME, rounding=np.rint, seed=RAND)
+    # functional_matrix_pca_dense.compute(DB_NAME, rounding=np.rint, seed=RAND)
 
     # Stack the algorithms
-    stacking.compute(DB_NAME, n_iter=50, seed=RAND)
+    stacking.compute(DB_NAME, n_iter=100, seed=RAND)
 
 if __name__ == '__main__':
     main()

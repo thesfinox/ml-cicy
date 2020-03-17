@@ -128,7 +128,7 @@ We can now analyse separately the results for $h_{11}$ and $h_{21}$ for each con
         \label{fig:rnd_for_err}
     \end{figure}
     
-\subsection{CNN (v1)}
+\subsection{Neural Networks}
 
     \subsubsection{Sequential Model}
         As a first approach to the problem, we use a CNN applied to the configuration matrix (mind that the it is a $12 \times 15$ matrix with $180$ entries) of the manifolds. The idea is to let the network decide which features should be used to predict the Hodge numbers using kernel transformations. We use two different architectures to predict $h_{11}$ and $h_{21}$ separately.
@@ -167,7 +167,7 @@ We can now analyse separately the results for $h_{11}$ and $h_{21}$ for each con
     \subsubsection{Other Models}
         As a training exercise, we also implemented two more different neural network architectures: one using the \texttt{PCA} results instead of the matrix and treating it through a \textit{ConvNet} and one using the \texttt{PCA} results through a FC network. Their results are irreparably worse with respect to the previous architectures (below $70\%$ of accuracy for $h_{11}$ and below $20\%$ for $h_{21}$) and will not be considered for the stacking ensemble.
         
-\subsection{Ensemble Learning (Stacking)}
+\subsection{Stacking Ensemble}
     Eventually we also present the results we got using an ensemble approach through stacking. Using the analysis discussed in Section~\ref{sec:ensemble_desc}, even though the algorithms perform in general a bit worse with respect to the previous analysis due to the smaller training set, we reach $91\%$ of accuracy on $h_{11}$ using \texttt{SVR} (Gaussian kernel) as meta learner and \texttt{RobustScaler} applied to the second level set, thus showing an improvement of $2\%$ with respect to the sequential model which proved to be the best result on the training set in this analysis. We also get $38\%$ of accuracy on $h_{21}$ using \texttt{RandomForestRegressor} as meta learner and no scalers applied to the second level set: we improve the result of the best model in the stacking analysis, the functional CNN\footnote{Notice that when using the ``full'' training set (i.e. $80\%$ of the total dataset) the functional CNN does not perform as well the sequential CNN, but when using less entries of the dataset (i.e. only $50\%$ of the entire dataset) the functional CNN matches the accuracy of the CNN on the full training set for $h_{11}$ and it outperforms it for $h_{21}$.}, by $4\%$.
     
     Notice that with the stacking ensemble we also improved the results given by the analysis of the previous sections: specifically we improve the accuracy on $h_{11}$ by $1\%$ and by $4\%$ on $h_{21}$ with respect to the sequential CNN which held the best results.

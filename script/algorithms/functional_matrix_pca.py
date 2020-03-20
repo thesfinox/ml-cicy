@@ -138,8 +138,8 @@ def compute(df_name, rounding=np.floor, seed=42):
     # df_eng_h21_test = scal.transform(df_eng_h21_test)
 
     # Reshape the matrix
-    df_matrix_nn_train = df_matrix_train.reshape(-1,12,15,1)
-    df_matrix_nn_test  = df_matrix_test.reshape(-1,12,15,1)
+    df_matrix_nn_train = df_matrix_train.reshape(-1,15,18,1)
+    df_matrix_nn_test  = df_matrix_test.reshape(-1,15,18,1)
 
     # Split into training and validation set
     df_matrix_nn_train, df_matrix_nn_val, \
@@ -192,29 +192,29 @@ def compute(df_name, rounding=np.floor, seed=42):
     num_cp_input_val       = df_eng_h21_nn_val[:,0]
     num_cp_input_test      = df_eng_h21_nn_test[:,0]
 
-    dim_cp_input_train     = df_eng_h21_nn_train[:,1:13]
-    dim_cp_input_val       = df_eng_h21_nn_val[:,1:13]
-    dim_cp_input_test      = df_eng_h21_nn_test[:,1:13]
+    dim_cp_input_train     = df_eng_h21_nn_train[:,1:16]
+    dim_cp_input_val       = df_eng_h21_nn_val[:,1:16]
+    dim_cp_input_test      = df_eng_h21_nn_test[:,1:16]
 
-    dim_h0_amb_input_train = df_eng_h21_nn_train[:,13:28]
-    dim_h0_amb_input_val   = df_eng_h21_nn_val[:,13:28]
-    dim_h0_amb_input_test  = df_eng_h21_nn_test[:,13:28]
+    dim_h0_amb_input_train = df_eng_h21_nn_train[:,16:34]
+    dim_h0_amb_input_val   = df_eng_h21_nn_val[:,16:34]
+    dim_h0_amb_input_test  = df_eng_h21_nn_test[:,16:34]
 
-    dim_cp_input_train_conv = K.reshape(df_eng_h21_nn_train[:,1:13], (-1,12,1))
-    dim_cp_input_val_conv   = K.reshape(df_eng_h21_nn_val[:,1:13], (-1,12,1))
-    dim_cp_input_test_conv  = K.reshape(df_eng_h21_nn_test[:,1:13], (-1,12,1))
+    dim_cp_input_train_conv = K.reshape(df_eng_h21_nn_train[:,1:16], (-1,15,1))
+    dim_cp_input_val_conv   = K.reshape(df_eng_h21_nn_val[:,1:16], (-1,15,1))
+    dim_cp_input_test_conv  = K.reshape(df_eng_h21_nn_test[:,1:16], (-1,15,1))
 
-    dim_h0_amb_input_train_conv = K.reshape(df_eng_h21_nn_train[:,13:28], (-1,15,1))
-    dim_h0_amb_input_val_conv   = K.reshape(df_eng_h21_nn_val[:,13:28], (-1,15,1))
-    dim_h0_amb_input_test_conv  = K.reshape(df_eng_h21_nn_test[:,13:28], (-1,15,1))
+    dim_h0_amb_input_train_conv = K.reshape(df_eng_h21_nn_train[:,16:34], (-1,18,1))
+    dim_h0_amb_input_val_conv   = K.reshape(df_eng_h21_nn_val[:,16:34], (-1,18,1))
+    dim_h0_amb_input_test_conv  = K.reshape(df_eng_h21_nn_test[:,16:34], (-1,18,1))
 
-    matrix_pca_input_train = df_eng_h21_nn_train[:,28:]
-    matrix_pca_input_val   = df_eng_h21_nn_val[:,28:]
-    matrix_pca_input_test  = df_eng_h21_nn_test[:,28:]
+    matrix_pca_input_train = df_eng_h21_nn_train[:,34:]
+    matrix_pca_input_val   = df_eng_h21_nn_val[:,34:]
+    matrix_pca_input_test  = df_eng_h21_nn_test[:,34:]
 
-    matrix_pca_input_train_conv = K.reshape(df_eng_h21_nn_train[:,28:], (-1,81,1))
-    matrix_pca_input_val_conv   = K.reshape(df_eng_h21_nn_val[:,28:], (-1,81,1))
-    matrix_pca_input_test_conv  = K.reshape(df_eng_h21_nn_test[:,28:], (-1,81,1))
+    matrix_pca_input_train_conv = K.reshape(df_eng_h21_nn_train[:,34:], (-1,130,1))
+    matrix_pca_input_val_conv   = K.reshape(df_eng_h21_nn_val[:,34:], (-1,130,1))
+    matrix_pca_input_test_conv  = K.reshape(df_eng_h21_nn_test[:,34:], (-1,130,1))
 
     # Build, compile and fit the model:
     model_cnn = build_conv_model_2(num_cp_dense_layers=([],

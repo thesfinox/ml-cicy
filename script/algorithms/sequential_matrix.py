@@ -89,8 +89,8 @@ def compute(df_name, rounding=np.floor, seed=42):
     # df_matrix_test  = scal.transform(df_matrix_test)
 
     # Reshape the matrix
-    df_matrix_nn_train = df_matrix_train.reshape(-1,12,15,1)
-    df_matrix_nn_test  = df_matrix_test.reshape(-1,12,15,1)
+    df_matrix_nn_train = df_matrix_train.reshape(-1,15,18,1)
+    df_matrix_nn_test  = df_matrix_test.reshape(-1,15,18,1)
 
     # Split into training and validation set
     df_matrix_nn_train, df_matrix_nn_val, \

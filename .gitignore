@@ -1,33 +1,5 @@
-__pycache__
-img/
-log/
-models/
-old/
 .ipynb_checkpoints/*
-*.h5
-*.tar.gz
+jupter/*
+old/*
+script/*
 *.pdf
-*.xz
-
-# Ignore same files in the script version
-
-script/*/__pycache__
-script/img/
-script/log/
-script/models/
-script/old/
-script/.ipynb_checkpoints/*
-script/*.h5
-script/*.tar.gz
-script/*.pdf
-script/*.xz
-script/*.txt
-script/*/*.bak
-script/*.bak
-
-# Do not upload pdf files in the tex directory
-
-tex/*.pdf
-tex/*.aux
-tex/*.gz
-tex/*.toc

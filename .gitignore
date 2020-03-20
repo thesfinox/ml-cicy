@@ -2,4 +2,12 @@
 jupter/*
 old/*
 script/*
+img/*
+log/*
+models/*
 *.pdf
+*.h5
+*.xz
+*.zst
+*.gz
+*.zip

@@ -134,17 +134,17 @@ def main():
     # Extract usable features
     feature_extract(DB_NAME)
 
-    # Compute algorithms
-    linear_regression.compute(DB_NAME, rounding=np.floor, seed=RAND)
-    lasso.compute(DB_NAME, n_iter=100, rounding=np.floor, seed=RAND)
-    elastic_net.compute(DB_NAME, n_iter=100, rounding=np.floor, seed=RAND)
-    ridge.compute(DB_NAME, n_iter=100, rounding=np.floor, seed=RAND)
-    linear_svr.compute(DB_NAME, n_iter=100, rounding=np.floor, seed=RAND)
-    svr_rbf.compute(DB_NAME, n_iter=100, rounding=np.rint, seed=RAND)
-    # xgb.compute(DB_NAME, n_iter=20, rounding=np.floor, seed=RAND)
-    # xgbrf.compute(DB_NAME, n_iter=20, rounding=np.floor, seed=RAND)
-    rnd_for.compute(DB_NAME, n_iter=20, rounding=np.floor, seed=RAND)
-    # grd_boost.compute(DB_NAME, n_iter=20, rounding=np.floor, seed=RAND)
+    # # Compute algorithms
+    # linear_regression.compute(DB_NAME, rounding=np.floor, seed=RAND)
+    # lasso.compute(DB_NAME, n_iter=100, rounding=np.floor, seed=RAND)
+    # elastic_net.compute(DB_NAME, n_iter=100, rounding=np.floor, seed=RAND)
+    # ridge.compute(DB_NAME, n_iter=100, rounding=np.floor, seed=RAND)
+    # linear_svr.compute(DB_NAME, n_iter=100, rounding=np.floor, seed=RAND)
+    # svr_rbf.compute(DB_NAME, n_iter=100, rounding=np.rint, seed=RAND)
+    # # xgb.compute(DB_NAME, n_iter=20, rounding=np.floor, seed=RAND)
+    # # xgbrf.compute(DB_NAME, n_iter=20, rounding=np.floor, seed=RAND)
+    # rnd_for.compute(DB_NAME, n_iter=20, rounding=np.floor, seed=RAND)
+    # # grd_boost.compute(DB_NAME, n_iter=20, rounding=np.floor, seed=RAND)
     sequential_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
     functional_matrix.compute(DB_NAME, rounding=np.rint, seed=RAND)
     functional_matrix_pca.compute(DB_NAME, rounding=np.rint, seed=RAND)

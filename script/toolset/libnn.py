@@ -60,7 +60,7 @@ def build_cnn_sequential(conv2d_layers,
     
     model = Sequential() # create the model
     
-    model.add(Input(shape=(12,15,1)))              # take just the input shape
+    model.add(Input(shape=(15,18,1)))              # take just the input shape
     
     for n in range(len(conv2d_layers)):            # add convolutional layers
         model.add(Conv2D(filters=conv2d_layers[n],
@@ -160,7 +160,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
         num_cp_layer_h21 = Dropout(rate=dropout[1])(num_cp_layer_h21)
     
     # connections for dim_cp
-    dim_cp_layer_in = Input(shape=(12,1), name='dim_cp')
+    dim_cp_layer_in = Input(shape=(15,1), name='dim_cp')
     dim_cp_layer_h11 = Lambda(lambda x: x, name='dim_cp_h11')(dim_cp_layer_in)
     dim_cp_layer_h21 = Lambda(lambda x: x, name='dim_cp_h21')(dim_cp_layer_in)
     
@@ -204,7 +204,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
     # dim_cp_layer_h21 = Dense(20)(dim_cp_layer_h21)
     
     # connections for dim_h0_amb
-    dim_h0_layer_in = Input(shape=(15,1), name='dim_h0_amb')
+    dim_h0_layer_in = Input(shape=(18,1), name='dim_h0_amb')
     dim_h0_layer_h11 = Lambda(lambda x: x, name='dim_h0_amb_h11')(dim_h0_layer_in)
     dim_h0_layer_h21 = Lambda(lambda x: x, name='dim_h0_amb_h21')(dim_h0_layer_in)
     
@@ -249,7 +249,7 @@ def build_conv_model(num_cp_dense_layers=(None,None),
     # dim_h0_layer_h21 = Dense(50)(dim_h0_layer_h21)
     
     # connections for matrix
-    matrix_layer_in = Input(shape=(12,15,1), name='matrix')
+    matrix_layer_in = Input(shape=(15,18,1), name='matrix')
     matrix_layer_h11 = Lambda(lambda x: x, name='matrix_h11')(matrix_layer_in)
     matrix_layer_h21 = Lambda(lambda x: x, name='matrix_h21')(matrix_layer_in)
     
@@ -378,7 +378,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
         num_cp_layer_h21 = Dropout(rate=dropout[1])(num_cp_layer_h21)
     
     # connections for dim_cp
-    dim_cp_layer_in = Input(shape=(12,1), name='dim_cp')
+    dim_cp_layer_in = Input(shape=(15,1), name='dim_cp')
     dim_cp_layer_h11 = Lambda(lambda x: x, name='dim_cp_h11')(dim_cp_layer_in)
     dim_cp_layer_h21 = Lambda(lambda x: x, name='dim_cp_h21')(dim_cp_layer_in)
     
@@ -420,7 +420,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     dim_cp_layer_h21 = Flatten()(dim_cp_layer_h21)
     
     # connections for dim_h0_amb
-    dim_h0_layer_in = Input(shape=(15,1), name='dim_h0_amb')
+    dim_h0_layer_in = Input(shape=(18,1), name='dim_h0_amb')
     dim_h0_layer_h11 = Lambda(lambda x: x, name='dim_h0_amb_h11')(dim_h0_layer_in)
     dim_h0_layer_h21 = Lambda(lambda x: x, name='dim_h0_amb_h21')(dim_h0_layer_in)
     
@@ -462,7 +462,7 @@ def build_conv_model_2(num_cp_dense_layers=(None,None),
     dim_h0_layer_h21 = Flatten()(dim_h0_layer_h21)
     
     # connections for matrix PCA
-    matrix_layer_in = Input(shape=(81,1), name='matrix')
+    matrix_layer_in = Input(shape=(130,1), name='matrix')
     matrix_layer_h11 = Lambda(lambda x: x, name='matrix_h11')(matrix_layer_in)
     matrix_layer_h21 = Lambda(lambda x: x, name='matrix_h21')(matrix_layer_in)
     
@@ -585,7 +585,7 @@ def build_dense_model(num_cp_dense_layers=(None,None),
         num_cp_layer_h21 = Dropout(rate=dropout[1])(num_cp_layer_h21)
     
     # connections for dim_cp
-    dim_cp_layer_in = Input(shape=(12,), name='dim_cp')
+    dim_cp_layer_in = Input(shape=(15,), name='dim_cp')
     dim_cp_layer_h11 = Lambda(lambda x: x, name='dim_cp_h11')(dim_cp_layer_in)
     dim_cp_layer_h21 = Lambda(lambda x: x, name='dim_cp_h21')(dim_cp_layer_in)
     
@@ -616,7 +616,7 @@ def build_dense_model(num_cp_dense_layers=(None,None),
         dim_cp_layer_h21 = Dropout(rate=dropout[1])(dim_cp_layer_h21)
     
     # connections for dim_h0_amb
-    dim_h0_layer_in = Input(shape=(15,), name='dim_h0_amb')
+    dim_h0_layer_in = Input(shape=(18,), name='dim_h0_amb')
     dim_h0_layer_h11 = Lambda(lambda x: x, name='dim_h0_amb_h11')(dim_h0_layer_in)
     dim_h0_layer_h21 = Lambda(lambda x: x, name='dim_h0_amb_h21')(dim_h0_layer_in)
     
@@ -647,7 +647,7 @@ def build_dense_model(num_cp_dense_layers=(None,None),
         dim_h0_layer_h21 = Dropout(rate=dropout[1])(dim_h0_layer_h21)
     
     # connections for matrix PCA
-    matrix_layer_in = Input(shape=(81,), name='matrix')
+    matrix_layer_in = Input(shape=(130,), name='matrix')
     matrix_layer_h11 = Lambda(lambda x: x, name='matrix_h11')(matrix_layer_in)
     matrix_layer_h21 = Lambda(lambda x: x, name='matrix_h21')(matrix_layer_in)
     

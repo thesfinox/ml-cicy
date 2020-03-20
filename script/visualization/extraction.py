@@ -20,7 +20,7 @@ def data_extraction(df, df_name):
 
     # Select features to drop
     features_to_drop = list(df.filter(regex='min_|max_|median_|mean_').columns)\
-                       + ['c2', 'redun', 'isprod', 'favour', 'size']
+                       + ['c2', 'isprod', 'favour', 'size']
     df               = df.drop(labels=features_to_drop, axis=1)
 
     labels      = ['h11', 'h21', 'euler']

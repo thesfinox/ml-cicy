@@ -112,52 +112,52 @@ def importances(df_name, cluster_range, seed=42):
     fig.tight_layout()
 
     label_plot(plot[0,0],
-               importances_h11[0:9],
+               importances_h11[0:10],
                title='Scalar Features',
                ylabel='Feature Importances',
                legend='$h_{11}$'
               )
     label_plot(plot[0,0],
-               importances_h21[0:9],
+               importances_h21[0:10],
                title='Scalar Features',
                ylabel='Feature Importances',
                legend='$h_{21}$'
               )
 
     label_plot(plot[0,1],
-               importances_h11[9:27],
+               importances_h11[10:28],
                title='Clustering Features',
                ylabel='Feature Importances',
                legend='$h_{11}$'
               )
     label_plot(plot[0,1],
-               importances_h21[9:27],
+               importances_h21[10:28],
                title='Clustering Features',
                ylabel='Feature Importances',
                legend='$h_{21}$'
               )
 
     label_plot(plot[1,0],
-               importances_h11[27:84],
+               importances_h11[28:90],
                title='Vector Features',
                ylabel='Feature Importances',
                legend='$h_{11}$'
               )
     label_plot(plot[1,0],
-               importances_h21[27:84],
+               importances_h21[28:90],
                title='Vector Features',
                ylabel='Feature Importances',
                legend='$h_{21}$'
               )
 
     label_plot(plot[1,1],
-               importances_h11[84:],
+               importances_h11[90:],
                title='Tensor Features',
                ylabel='Feature Importances',
                legend='$h_{11}$'
               )
     label_plot(plot[1,1],
-               importances_h21[84:],
+               importances_h21[90:],
                title='Tensor Features',
                ylabel='Feature Importances',
                legend='$h_{21}$'
@@ -167,24 +167,24 @@ def importances(df_name, cluster_range, seed=42):
     # plt.show()
     plt.close(fig)
 
-    vector_importances_h11_sum = [ ('dim_cp_sum',     np.sum([ f[1] for f in importances_h11[27:39] ]) ),
-                                   ('num_dim_cp_sum',  np.sum([ f[1] for f in importances_h11[39:46] ]) ),
-                                   ('deg_eqs_sum',     np.sum([ f[1] for f in importances_h11[46:61] ]) ),
-                                   ('num_deg_eqs_sum', np.sum([ f[1] for f in importances_h11[61:69] ]) ),
-                                   ('dim_h0_amb_sum',  np.sum([ f[1] for f in importances_h11[69:84] ]) )
+    vector_importances_h11_sum = [ ('dim_cp_sum',     np.sum([ f[1] for f in importances_h11[28:42] ]) ),
+                                   ('num_dim_cp_sum',  np.sum([ f[1] for f in importances_h11[42:49] ]) ),
+                                   ('deg_eqs_sum',     np.sum([ f[1] for f in importances_h11[49:67] ]) ),
+                                   ('num_deg_eqs_sum', np.sum([ f[1] for f in importances_h11[67:75] ]) ),
+                                   ('dim_h0_amb_sum',  np.sum([ f[1] for f in importances_h11[75:90] ]) )
                                  ]
-    vector_importances_h21_sum = [ ('dim_cp_sum',      np.sum([ f[1] for f in importances_h21[27:39] ]) ),
-                                   ('num_dim_cp_sum',  np.sum([ f[1] for f in importances_h21[39:46] ]) ),
-                                   ('deg_eqs_sum',     np.sum([ f[1] for f in importances_h21[46:61] ]) ),
-                                   ('num_deg_eqs_sum', np.sum([ f[1] for f in importances_h21[61:69] ]) ),
-                                   ('dim_h0_amb_sum',  np.sum([ f[1] for f in importances_h21[69:84] ]) )
+    vector_importances_h21_sum = [ ('dim_cp_sum',      np.sum([ f[1] for f in importances_h21[28:42] ]) ),
+                                   ('num_dim_cp_sum',  np.sum([ f[1] for f in importances_h21[42:49] ]) ),
+                                   ('deg_eqs_sum',     np.sum([ f[1] for f in importances_h21[49:67] ]) ),
+                                   ('num_deg_eqs_sum', np.sum([ f[1] for f in importances_h21[67:75] ]) ),
+                                   ('dim_h0_amb_sum',  np.sum([ f[1] for f in importances_h21[75:90] ]) )
                                  ]
 
-    tensor_importances_h11_sum = [ ('matrix_sum',      np.sum([ f[1] for f in importances_h11[84:264] ]) ),
-                                   ('pca99_sum',       np.sum([ f[1] for f in importances_h11[264:] ]) )
+    tensor_importances_h11_sum = [ ('matrix_sum',      np.sum([ f[1] for f in importances_h11[90:360] ]) ),
+                                   ('pca99_sum',       np.sum([ f[1] for f in importances_h11[360:] ]) )
                                  ]
-    tensor_importances_h21_sum = [ ('matrix_sum',      np.sum([ f[1] for f in importances_h21[84:264] ]) ),
-                                   ('pca99_sum',       np.sum([ f[1] for f in importances_h21[264:] ]) )
+    tensor_importances_h21_sum = [ ('matrix_sum',      np.sum([ f[1] for f in importances_h21[90:360] ]) ),
+                                   ('pca99_sum',       np.sum([ f[1] for f in importances_h21[360:] ]) )
                                  ]
 
     fig, plot = plt.subplots(1, 2, figsize=(12,5))
@@ -221,17 +221,17 @@ def importances(df_name, cluster_range, seed=42):
     plt.close(fig)
 
 
-    importances_h11_sum = [ ('scalar',  np.sum([ f[1] for f in importances_h11[0:9] ]) ),
-                            ('vector',  np.sum([ f[1] for f in importances_h11[27:84] ]) ),
-                            ('tensor',  np.sum([ f[1] for f in importances_h11[84:264] ]) ),
-                            ('cluster', np.sum([ f[1] for f in importances_h11[9:27] ]) ),
-                            ('pca',     np.sum([ f[1] for f in importances_h11[264:] ]) ),
+    importances_h11_sum = [ ('scalar',  np.sum([ f[1] for f in importances_h11[0:10] ]) ),
+                            ('vector',  np.sum([ f[1] for f in importances_h11[28:90] ]) ),
+                            ('tensor',  np.sum([ f[1] for f in importances_h11[90:360] ]) ),
+                            ('cluster', np.sum([ f[1] for f in importances_h11[10:28] ]) ),
+                            ('pca',     np.sum([ f[1] for f in importances_h11[360:] ]) ),
                           ]
-    importances_h21_sum = [ ('scalar',  np.sum([ f[1] for f in importances_h21[0:9] ]) ),
-                            ('vector',  np.sum([ f[1] for f in importances_h21[27:84] ]) ),
-                            ('tensor',  np.sum([ f[1] for f in importances_h21[84:264] ]) ),
-                            ('cluster', np.sum([ f[1] for f in importances_h21[9:27] ]) ),
-                            ('pca',     np.sum([ f[1] for f in importances_h21[264:] ]) ),
+    importances_h21_sum = [ ('scalar',  np.sum([ f[1] for f in importances_h21[0:10] ]) ),
+                            ('vector',  np.sum([ f[1] for f in importances_h21[28:90] ]) ),
+                            ('tensor',  np.sum([ f[1] for f in importances_h21[90:360] ]) ),
+                            ('cluster', np.sum([ f[1] for f in importances_h21[10:28] ]) ),
+                            ('pca',     np.sum([ f[1] for f in importances_h21[364:] ]) ),
                           ]
 
     fig, plot = plt.subplots(figsize=(6,5))

@@ -1,11 +1,18 @@
+# IPython checkpoints
 .ipynb_checkpoints/*
-jupter/*
-old/*
-script/*
-img/*
-log/*
-models/*
+log/original/.ipynb_checkpoints/*
+*.1
+
+# Log files (unless specifically added)
+*.log
+
+# Images
+*.png
+
+# Notes (unless specifically added)
 *.pdf
+
+# Models and datasets
 *.h5
 *.xz
 *.zst

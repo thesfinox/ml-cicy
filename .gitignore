@@ -1,6 +1,5 @@
 # IPython checkpoints
 .ipynb_checkpoints/*
-log/original/.ipynb_checkpoints/*
 *.1
 
 # Log files (unless specifically added)

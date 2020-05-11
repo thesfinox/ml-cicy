@@ -12,6 +12,8 @@ The analysis is divided into different [_Jupyter_](https://jupyter.org/) noteboo
 
 Each [IPython](https://ipython.org/) notebook is entirely independent and can be run separately. The only real requirement is to first run (at least once) the _preanalysis_ notebook to generate the "analysis-ready" dataset.
 
+Notice that there are several versions of _apparently_ the same notebooks: those name _cicy3o_... refer to the original dataset, while _cicy3f_... to the dataset with **favourable** datasets.
+
 ## Installation Prerequisites
 
 In order to run the analysis you will need a _Jupyter_ installation (we used an [_Anaconda_](https://anaconda.org/) environment) using **Python 3.6** at least. Moreover you will be required to install the following packages:

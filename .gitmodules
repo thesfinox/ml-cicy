@@ -1,3 +1,3 @@
 [submodule "mltools"]
-	path = mltools
+	path = mltools_repo
 	url = git@github.com:thesfinox/mltools.git

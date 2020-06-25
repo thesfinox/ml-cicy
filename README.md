@@ -1,5 +1,7 @@
 # Machine Learning for Complete Intersection Calabi-Yau 3-folds
 
+[![nbviewer](https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.jupyter.org/github/thesfinox/ml-cicy/)
+
 We consider a machine learning approach to predict the **Hodge numbers** of **Complete Intersection Calabi-Yau (CICY) 3-folds** in the framework of String Theory using two different sets of data: a first [dataset](http://dx.doi.org/10.1088/0264-9381/6/2/006) containing the configuration matrices of 7890 CICY manifolds (this is the _original dataset_) and a dataset (the _favourable dataset_) containing their [favourable](http://arxiv.org/abs/1708.07907) embedding (at least for most of them).
 
 The repository can be found on GitHub at [this URL](https://github.com/thesfinox/ml-cicy).

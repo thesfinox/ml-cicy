@@ -2,9 +2,11 @@
 
 H. Erbin and R. Finotello
 
-Physics Department
+**Physics Department**
+
 _Università degli Studi di Torino_
 and _I.N.F.N. - sezione di Torino_
+
 Via P. Giuria 1, I-10125 Torino, Italy
 
 ## Abstract

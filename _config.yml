@@ -1,1 +1,4 @@
 theme: jekyll-theme-leap-day
+title: Machine Learning for Complete Intersection Calabi-Yau 3-folds
+description: Predicting Hodge numbers using Deep Learning
+show_downloads: ["true"]

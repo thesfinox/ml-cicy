@@ -1,23 +1,4 @@
-# IPython checkpoints
+cicy3o_data.tar.gz
+cicy3o.h5
 .ipynb_checkpoints/*
-*.1
-
-# Log files (unless specifically added)
 log/*
-*.log
-
-# Images
-img/*
-*.png
-
-# Notes (unless specifically added)
-*.pdf
-
-# Models and datasets
-output/*
-models/*
-*.h5
-*.xz
-*.zst
-*.gz
-*.zip

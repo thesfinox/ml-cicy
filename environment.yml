@@ -11,7 +11,7 @@ dependencies:
   - pydot
   - pytables
   - python>=3.6
-  - scikit-learn>=0.23
+  - scikit-learn<0.23
   - scikit-optimize>=0.7.4
   - scipy
   - shap>=0.35

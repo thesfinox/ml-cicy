@@ -1,6 +1,6 @@
 theme: jekyll-theme-tactile
-title: Machine Learning for CICY 3-folds
-description: Predicting Hodge numbers using Deep Learning
+title: Machine Learning for Complete Intersection Calaby-Yau 3-folds
+description: Predicting Hodge Numbers Using Deep Learning
 logo: /img/conv_inception.png
 show_downloads: true
 github:

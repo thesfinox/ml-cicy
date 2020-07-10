@@ -1,0 +1,17 @@
+name: ml4cicy
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - jupyter_core
+  - matplotlib>=3.2
+  - numpy>=1.18
+  - pandas>=1.0
+  - pydot
+  - pytables
+  - python>=3.6
+  - scikit-learn<0.23
+  - scikit-optimize>=0.7.4
+  - scipy
+  - seaborn>=0.10
+  - tensorflow-gpu>=2.0

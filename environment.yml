@@ -4,7 +4,6 @@ channels:
   - defaults
 dependencies:
   - jupyter_core
-  - lightgbm>=2.0
   - matplotlib>=3.2
   - numpy>=1.18
   - pandas>=1.0

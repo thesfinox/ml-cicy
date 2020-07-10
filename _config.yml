@@ -1,4 +1,4 @@
-theme: jekyll-theme-minimal
+theme: jekyll-theme-tactile
 title: Machine Learning for CICY 3-folds
 description: Predicting Hodge numbers using Deep Learning
 logo: /img/conv_inception.png

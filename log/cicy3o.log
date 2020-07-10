@@ -1,4 +1,4 @@
-2020-06-30 18:18:55,220: INFO ==> 
+2020-07-10 09:40:11,098: INFO ==> 
 
 ----------------------------------------------
   MACHINE LEARNING FOR CICY 3-FOLDS
@@ -14,24 +14,24 @@
   values of the Hodge numbers h_11 and h_21.
 
 
-2020-06-30 18:18:59,987: DEBUG ==> Set GPU memory growth.
-2020-06-30 18:19:00,169: DEBUG ==> File successfully downloaded.
-2020-06-30 18:19:27,603: DEBUG ==> Tidy database has been saved to file.
-2020-06-30 18:19:37,401: INFO ==> Computing SVD.
-2020-06-30 18:19:51,078: INFO ==> Computing PCA.
-2020-06-30 18:19:54,589: INFO ==> Computing KMeans with 2 clusters
-2020-06-30 18:19:56,230: INFO ==> Computing KMeans with 3 clusters
-2020-06-30 18:19:59,662: INFO ==> Computing KMeans with 4 clusters
-2020-06-30 18:20:02,251: INFO ==> Computing KMeans with 5 clusters
-2020-06-30 18:20:06,731: INFO ==> Computing KMeans with 6 clusters
-2020-06-30 18:20:10,916: INFO ==> Computing KMeans with 7 clusters
-2020-06-30 18:20:14,532: INFO ==> Computing KMeans with 8 clusters
-2020-06-30 18:20:18,747: INFO ==> Computing KMeans with 9 clusters
-2020-06-30 18:20:23,913: INFO ==> Computing KMeans with 10 clusters
-2020-06-30 18:20:32,236: INFO ==> Computing KMeans with 11 clusters
-2020-06-30 18:20:41,149: INFO ==> Computing KMeans with 12 clusters
-2020-06-30 18:20:50,896: INFO ==> Computing KMeans with 13 clusters
-2020-06-30 18:21:00,284: INFO ==> Computing KMeans with 14 clusters
-2020-06-30 18:21:05,410: INFO ==> Computing KMeans with 15 clusters
-2020-06-30 18:21:18,627: INFO ==> Full database has been saved to file.
-2020-06-30 18:21:18,858: INFO ==> Fitting random forest for variable ranking.
+2020-07-10 09:40:14,193: DEBUG ==> Set GPU memory growth.
+2020-07-10 09:40:14,296: DEBUG ==> File successfully downloaded.
+2020-07-10 09:40:30,752: DEBUG ==> Tidy database has been saved to file.
+2020-07-10 09:40:37,591: INFO ==> Computing SVD.
+2020-07-10 09:40:45,681: INFO ==> Computing PCA.
+2020-07-10 09:40:47,628: INFO ==> Computing KMeans with 2 clusters
+2020-07-10 09:40:48,294: INFO ==> Computing KMeans with 3 clusters
+2020-07-10 09:40:49,559: INFO ==> Computing KMeans with 4 clusters
+2020-07-10 09:40:51,565: INFO ==> Computing KMeans with 5 clusters
+2020-07-10 09:40:53,804: INFO ==> Computing KMeans with 6 clusters
+2020-07-10 09:40:56,666: INFO ==> Computing KMeans with 7 clusters
+2020-07-10 09:40:59,489: INFO ==> Computing KMeans with 8 clusters
+2020-07-10 09:41:02,088: INFO ==> Computing KMeans with 9 clusters
+2020-07-10 09:41:05,165: INFO ==> Computing KMeans with 10 clusters
+2020-07-10 09:41:08,563: INFO ==> Computing KMeans with 11 clusters
+2020-07-10 09:41:12,181: INFO ==> Computing KMeans with 12 clusters
+2020-07-10 09:41:15,308: INFO ==> Computing KMeans with 13 clusters
+2020-07-10 09:41:19,482: INFO ==> Computing KMeans with 14 clusters
+2020-07-10 09:41:25,603: INFO ==> Computing KMeans with 15 clusters
+2020-07-10 09:41:36,321: INFO ==> Full database has been saved to file.
+2020-07-10 09:41:36,418: INFO ==> Fitting random forest for variable ranking.

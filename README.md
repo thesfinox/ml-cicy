@@ -1,13 +1,12 @@
 # Machine Learning for Complete Intersection Calabi-Yau 3-folds
 
-H. Erbin and R. Finotello
+Harold Erbin and Riccardo Finotello
 
-_Physics Department_
+_Physics Department, Università degli Studi di Torino_
 
-_Università degli Studi di Torino_
 and _I.N.F.N. - sezione di Torino_
 
-Via P. Giuria 1, I-10125 Torino, Italy
+Via Pietro Giuria 1, I-10125 Torino, Italy
 
 ## Abstract
 
@@ -46,9 +45,11 @@ In order to run the analysis you will need a _Jupyter_ installation (we used an 
 - [_Matplotlib_](https://matplotlib.org/)
 - [_Numpy_](https://numpy.org)
 - [_Pandas_](https://pandas.pydata.org/)
-- [_Scikit-learn_ (>= 2.2.4)](https://scikit-learn.org/)
-- [_Scikit-optimize_](https://scikit-optimize.github.io/stable/)
+- [_PyDot_](https://pypi.org/project/pydot/)
+- [_Scikit-learn_ (< 0.23)](https://scikit-learn.org/)
+- [_Scikit-optimize_ (>= 0.7.4)](https://scikit-optimize.github.io/stable/)
 - [_Scipy_](https://www.scipy.org/)
+- [_Seaborn_](https://seaborn.pydata.org/index.html)
 - [_Tensorflow (>= 2.0.0)_](https://www.tensorflow.org/)
 
 

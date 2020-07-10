@@ -2,7 +2,7 @@
 
 _Physics Department, Università degli Studi di Torino_ and _I.N.F.N. - sezione di Torino_
 
-[Via Pietro Giuria 1, I-10125 Torino, Italy](https://goo.gl/maps/XxvAmhe2wUzxvhz66)
+[Via Pietro Giuria 1, I-10125 Torino, Italy](https://goo.gl/maps/tzP76okZ7HxHGdmo9)
 
 ## Abstract
 

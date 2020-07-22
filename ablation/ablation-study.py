@@ -10,14 +10,14 @@ import numpy as np
 sns.set()
 
 data = [('inception_1d_noout', '30%', 0.97),
-        ('inception_1d_out', '30%', 0.89),
+        ('inception_1d_out', '30%', 0.93),
         ('inception_2d_noout', '30%', 0.69),
         ('inception_2d_out', '30%', 0.62),
         ('conv_noout', '30%', 0.79),
         ('conv_out', '30%', 0.68),
-        ('inception_1d_noout', '80%', 0.99),
-        ('inception_2d_noout', '80%', 0.86),
+        ('inception_1d_noout', '80%', 1.00),
         ('inception_1d_out', '80%', 0.99),
+        ('inception_2d_noout', '80%', 0.86),
         ('inception_2d_out', '80%', 0.78),
         ('conv_noout', '80%', 0.93),
         ('conv_out', '80%', 0.85)

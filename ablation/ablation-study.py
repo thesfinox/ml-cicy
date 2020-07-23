@@ -9,18 +9,18 @@ import numpy as np
 
 sns.set()
 
-data = [('inception_1d_noout', '30%', 0.98),
-        ('inception_1d_out', '30%', 0.94),
-        ('inception_2d_noout', '30%', 0.74),
-        ('inception_2d_out', '30%', 0.67),
-        ('conv_noout', '30%', 0.84),
-        ('conv_out', '30%', 0.77),
-        ('inception_1d_noout', '80%', 1.00),
+data = [('inception_1d_noout', '30%', 0.97),
+        ('inception_1d_out', '30%', 0.89),
+        ('inception_2d_noout', '30%', 0.69),
+        ('inception_2d_out', '30%', 0.62),
+        ('conv_noout', '30%', 0.79),
+        ('conv_out', '30%', 0.68),
+        ('inception_1d_noout', '80%', 0.99),
         ('inception_1d_out', '80%', 0.97),
         ('inception_2d_noout', '80%', 0.86),
-        ('inception_2d_out', '80%', 0.81),
+        ('inception_2d_out', '80%', 0.78),
         ('conv_noout', '80%', 0.93),
-        ('conv_out', '80%', 0.90)
+        ('conv_out', '80%', 0.85)
         ]
 data = pd.DataFrame(data, columns=('id', 'percentage', 'accuracy'))
 

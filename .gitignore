@@ -1,23 +1,4 @@
-# IPython checkpoints
-.ipynb_checkpoints/*
-*.1
-
-# Log files (unless specifically added)
-log/*
-*.log
-
-# Images
+data/*
 img/*
-*.png
-
-# Notes (unless specifically added)
-*.pdf
-
-# Models and datasets
-output/*
+.ipynb_checkpoints/*
 models/*
-*.h5
-*.xz
-*.zst
-*.gz
-*.zip

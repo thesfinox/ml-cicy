@@ -1,0 +1,13 @@
+cnn_sequential.h5
+cnn_inception.h5
+cicy3o_tidy.csv
+cicy_plots.pdf
+cicy_plots.png
+.ipynb_checkpoints/*
+nn_plots.pdf
+nn_plots.png
+noout.log
+noout.old.log
+noout.py
+plots.ipynb
+

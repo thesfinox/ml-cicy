@@ -15,10 +15,10 @@ data = [('lin_reg', '80', 0.64, 0.21),
         ('rnd_for', '30', 0.58, 0.14),
         ('grd_bst', '80', 0.61, 0.23),
         ('grd_bst', '30', 0.55, 0.20),
-        ('convnet', '80', 0.94, 0.36),
-        ('convnet', '30', 0.82, 0.23),
-        ('inception', '80', 0.99, 0.50),
-        ('inception', '30', 0.97, 0.31),
+        ('convnet', '80', 0.95, 0.36),
+        ('convnet', '30', 0.83, 0.23),
+        ('inception', '80', 1.00, 0.50),
+        ('inception', '30', 0.97, 0.33),
        ]
 data = pd.DataFrame(data, columns=('id', 'percentage', 'h11_acc', 'h21_acc'))
 

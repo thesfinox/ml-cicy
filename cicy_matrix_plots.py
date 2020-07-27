@@ -5,19 +5,19 @@ import numpy as np
 
 sns.set()
 
-data = [('lin_reg', '80', 0.64, 0.21),
-        ('lin_reg', '30', 0.63, 0.19),
-        ('lin_svr', '80', 0.65, 0.21),
-        ('lin_svr', '30', 0.63, 0.19),
-        ('svr_rbf', '80', 0.72, 0.34),
-        ('svr_rbf', '30', 0.69, 0.27),
-        ('rnd_for', '80', 0.66, 0.17),
-        ('rnd_for', '30', 0.58, 0.14),
-        ('grd_bst', '80', 0.61, 0.23),
-        ('grd_bst', '30', 0.55, 0.20),
+data = [('lin_reg', '80', 0.51, 0.11),
+        ('lin_reg', '30', 0.49, 0.10),
+        ('lin_svr', '80', 0.61, 0.11),
+        ('lin_svr', '30', 0.61, 0.10),
+        ('svr_rbf', '80', 0.70, 0.22),
+        ('svr_rbf', '30', 0.58, 0.16),
+        ('rnd_for', '80', 0.55, 0.12),
+        ('rnd_for', '30', 0.54, 0.11),
+        ('grd_bst', '80', 0.50, 0.14),
+        ('grd_bst', '30', 0.46, 0.10),
         ('convnet', '80', 0.95, 0.36),
         ('convnet', '30', 0.83, 0.23),
-        ('inception', '80', 1.00, 0.50),
+        ('inception', '80', 0.99, 0.50),
         ('inception', '30', 0.97, 0.33),
        ]
 data = pd.DataFrame(data, columns=('id', 'percentage', 'h11_acc', 'h21_acc'))
@@ -78,5 +78,5 @@ for p in acc_plt.patches:
                     )
     
 plt.tight_layout()
-plt.savefig('./cicy_plots.pdf', dpi=150, format='pdf')
-plt.savefig('./cicy_plots.png', dpi=150, format='png')
+plt.savefig('./cicy_matrix_plots.pdf', dpi=150, format='pdf')
+plt.savefig('./cicy_matrix_plots.png', dpi=150, format='png')

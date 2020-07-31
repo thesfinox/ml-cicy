@@ -1,0 +1,36 @@
+Training 80% data w/ outliers (line kernel)
+Accuracy for h_11: 94.17%
+Accuracy for h_21: 46.01%
+Training 80% data w/o outliers (line kernel)
+Accuracy for h_11: 96.56%
+Accuracy for h_21: 43.64%
+Training 30% data w/ outliers (line kernel)
+Accuracy for h_11: 77.57%
+Accuracy for h_21: 27.31%
+Training 30% data w/o outliers (line kernel)
+Accuracy for h_11: 86.95%
+Accuracy for h_21: 31.27%
+Training 80% data w/ outliers (square kernel)
+Accuracy for h_11: 78.07%
+Accuracy for h_21: 32.45%
+Training 80% data w/o outliers (square kernel)
+Accuracy for h_11: 81.81%
+Accuracy for h_21: 33.84%
+Training 30% data w/ outliers (square kernel)
+Accuracy for h_11: 63.58%
+Accuracy for h_21: 21.34%
+Training 30% data w/o outliers (square kernel)
+Accuracy for h_11: 68.86%
+Accuracy for h_21: 21.97%
+Training 80% data w/ outliers (small kernel)
+Accuracy for h_11: 76.30%
+Accuracy for h_21: 28.52%
+Training 80% data w/o outliers (small kernel)
+Accuracy for h_11: 80.53%
+Accuracy for h_21: 28.63%
+Training 30% data w/ outliers (small kernel)
+Accuracy for h_11: 62.72%
+Accuracy for h_21: 19.24%
+Training 30% data w/o outliers (small kernel)
+Accuracy for h_11: 64.40%
+Accuracy for h_21: 20.53%

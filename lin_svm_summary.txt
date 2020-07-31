@@ -1,0 +1,11 @@
+80% training data:
+    Accuracy on h_11 w/  outliers: 61.09%
+    Accuracy on h_21 w/  outliers: 10.08%
+    Accuracy on h_11 w/o outliers: 60.53%
+    Accuracy on h_21 w/o outliers: 10.57%
+
+30% training data:
+    Accuracy on h_11 w/  outliers: 52.98%
+    Accuracy on h_21 w/  outliers: 10.25%
+    Accuracy on h_11 w/o outliers: 52.84%
+    Accuracy on h_21 w/o outliers: 10.33%

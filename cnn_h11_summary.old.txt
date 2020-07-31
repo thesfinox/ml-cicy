@@ -1,0 +1,32 @@
+Training 80% data w/ outliers (line kernel)
+Accuracy for h_11: 97.85%
+Training 80% data w/o outliers (line kernel)
+Accuracy for h_11: 99.75%
+Training 30% data w/ outliers (line kernel)
+Accuracy for h_11: 94.51%
+Training 30% data w/o outliers (line kernel)
+Accuracy for h_11: 98.03%
+Training 80% data w/ outliers (square kernel)
+Accuracy for h_11: 83.02%
+Training 80% data w/o outliers (square kernel)
+Accuracy for h_11: 89.44%
+Training 30% data w/ outliers (square kernel)
+Accuracy for h_11: 95.31%
+Training 30% data w/o outliers (square kernel)
+Accuracy for h_11: 98.13%
+Training 80% data w/ outliers (small kernel)
+Accuracy for h_11: 0.25%
+Training 80% data w/o outliers (small kernel)
+Accuracy for h_11: 0.00%
+Training 30% data w/ outliers (small kernel)
+Accuracy for h_11: 0.32%
+Training 30% data w/o outliers (small kernel)
+Accuracy for h_11: 0.00%
+Training 80% data w/ outliers (large kernel)
+Accuracy for h_11: 88.21%
+Training 80% data w/o outliers (large kernel)
+Accuracy for h_11: 0.00%
+Training 30% data w/ outliers (large kernel)
+Accuracy for h_11: 73.47%
+Training 30% data w/o outliers (large kernel)
+Accuracy for h_11: 0.00%

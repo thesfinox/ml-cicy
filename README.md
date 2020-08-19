@@ -10,6 +10,8 @@ _Physics Department, Università degli Studi di Torino_ and _I.N.F.N. - sezione 
 
 We consider a machine learning approach to predict the **Hodge numbers** of **Complete Intersection Calabi-Yau (CICY) 3-folds** in the framework of String Theory using two different sets of data: a first [dataset](http://dx.doi.org/10.1088/0264-9381/6/2/006) containing the configuration matrices of 7890 CICY manifolds (this is the _original dataset_) and a dataset (the _favourable dataset_) containing their [favourable](http://arxiv.org/abs/1708.07907) embedding (at least for most of them).
 
+Related preprint is on [ArXiv](http://arxiv.org/abs/2007.15706).
+
 ## Methodology
 
 ![Inception network](./img/conv_inception.png)

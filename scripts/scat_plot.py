@@ -41,6 +41,7 @@ lab_title = ['h11', 'h21']
 lab_names = ['$h^{1,1}$', '$h^{2,1}$']
 var_title = ['num_cp', 'rank_matrix', 'norm_matrix']
 var_names = ['m', 'rank', 'norm']
+var_expl  = ['no. of projective spaces', 'rank of the matrix', 'Frobenius norm of the matrix']
 
 # plot the distributions
 for n in range(len(var_title)):
@@ -59,7 +60,7 @@ for n in range(len(var_title)):
                             alpha=0.5,
                             ax=ax
                            )
-            ax.set(xlabel=var_names[n],
+            ax.set(xlabel=var_expl[n],
                    ylabel=lab_names[m],
                    yticks=np.arange(min(dat_title[p][lab_title[m]]),
                                     max(dat_title[p][lab_title[m]])+1,

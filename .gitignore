@@ -1,3 +1,6 @@
+nn_tools/__pycache__/*
+nn_tools/utils/__pycache__/*
+img/*
 data/*
 models/*
 .ipynb_checkpoints/*

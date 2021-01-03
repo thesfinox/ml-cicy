@@ -1,7 +1,5 @@
-nn_tools/__pycache__/*
-nn_tools/utils/__pycache__/*
+old/*
 img/*
 data/*
 models/*
 .ipynb_checkpoints/*
-nn_tools/.ipynb_checkpoints/*
